@@ -1,5 +1,5 @@
 Here's a line
 
-Hello world!
+Hello world from B!
 
 Here's another line

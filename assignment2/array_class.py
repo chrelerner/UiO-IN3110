@@ -26,12 +26,57 @@ class Array:
         """
 
         # Check if the values are of valid types
+        
+        if not isinstance(shape, tuple):
+            # Return informative TypeError.
+            pass
+            
+            
+        for element in values:
+            
+            if not isinstance(element, int):
+                if not isinstance(element, float):
+                    if not isinstance(element, bool):
+                        #Return informative TypeError
+                        pass
+        
+        values_type = type(values[0])
+        
+        for element in values:
+            
+            if not isinstance(element, values_type):
+                # Return informative ValueError.
+                pass
+    
+    
 
         # Check that the amount of values corresponds to the shape
+        
+        if shape[0] != len(values):
+            # Return informative ValueError:
+            pass
+
+
 
         # Set class-variables
-
-        pass
+        self.shape = shape
+        self.value_list = []
+        
+        for element in values:
+            self.value_list.append(element)
+            
+            
+    # Returns the element at the given index of the array.
+    def __getitem__(self, index):
+        
+        if isinstance(index, int):
+            return self.value_list[index]
+        else:
+            # Return informative TypeError.
+            pass
+        
+        
+        
 
     def __str__(self):
         """Returns a nicely printable string representation of the array.

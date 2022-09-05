@@ -25,59 +25,59 @@ class Array:
             ValueError: If the number of values does not fit with the shape.
         """
 
-        # Check if the values are of valid types
+        # Checks if the values are of valid types
         
         if not isinstance(shape, tuple):
-            # Return informative TypeError.
-            pass
-            
-            
+            # Returns informative TypeError.
+            raise TypeError("Shape argument is not a tuple.\n")
+                
         for element in values:
             
             if not isinstance(element, int):
                 if not isinstance(element, float):
                     if not isinstance(element, bool):
-                        #Return informative TypeError
-                        pass
+                        #Returns informative TypeError
+                        raise TypeError("Argument contained value of type not allowed.\n")
         
         values_type = type(values[0])
         
         for element in values:
             
-            if not isinstance(element, values_type):
-                # Return informative ValueError.
-                pass
+            if type(element) != values_type:
+                # Returns informative ValueError.
+                raise ValueError("Array-elements given as argument do not share the same type.\n")
     
     
 
-        # Check that the amount of values corresponds to the shape
+        # Checks that the amount of values corresponds to the shape
         
         if shape[0] != len(values):
-            # Return informative ValueError:
-            pass
+            # Returns informative ValueError
+            raise ValueError("Amount of values given does not correspond to the shape.\n")
 
 
 
         # Set class-variables
         self.shape = shape
         self.value_list = []
+        self.values_type = values_type
         
         for element in values:
             self.value_list.append(element)
             
             
-    # Returns the element at the given index of the array.
+    # This method returns the element at the given index of the array.
     def __getitem__(self, index):
         
         if isinstance(index, int):
             return self.value_list[index]
         else:
             # Return informative TypeError.
-            pass
+            raise TypeError("Index argument should be of type int.\n")
         
         
         
-
+    # Fix this method with a better representation, like Array((5,), 1, 2, 3, 4, 5).
     def __str__(self):
         """Returns a nicely printable string representation of the array.
 
@@ -85,7 +85,14 @@ class Array:
             str: A string representation of the array.
 
         """
-        pass
+        result = "["
+        
+        for element in self.value_list:
+            result += element + ", "
+        result += "]"
+        
+        print(result)
+        
 
     def __add__(self, other):
         """Element-wise adds Array with another Array or number.
@@ -104,8 +111,34 @@ class Array:
         # check that the method supports the given arguments (check for data type and shape of array)
         # if the array is a boolean you should return NotImplemented
 
-        pass
+        if self.values_type == "bool":
+            return NotImplemented
+        
+        # Checks that 'other' is a scalar OR an array of the same shape as self.
+        # Returns NotImplemented if not.
+        if not isinstance(other, (int, float)):
+            if not isinstance(other, Array):
+                return NotImplemented
+            if other.shape != self.shape:
+                return NotImplemented
+        
+        
+        # Perform addition by scalar.
+        if isinstance(other, (int, float)):
+            
+            for i in range(len(self.value_list)):
+                self.value_list[i] += other
+                
+        # Performs addition by array.
+        else:
+            
+            for i in range(len(self.value_list)):
+                self.value_list[i] += other.value_list[i]
+        
+        
 
+
+    # Same implementation as __add__.
     def __radd__(self, other):
         """Element-wise adds Array with another Array or number.
 
@@ -119,7 +152,8 @@ class Array:
             Array: the sum as a new array.
 
         """
-        pass
+        
+        return self.__add__(other)
 
     def __sub__(self, other):
         """Element-wise subtracts an Array or number from this Array.

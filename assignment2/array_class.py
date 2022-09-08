@@ -125,7 +125,7 @@ class Array:
         
         # Checks that 'other' is a scalar of proper type, OR an array.
         # Returns NotImplemented if not. Raises ValueError if shapes do not match.
-        if type(other) != self.values_type():
+        if type(other) != self.values_type:
             
             if not isinstance(other, Array):
                 return NotImplemented
@@ -195,7 +195,7 @@ class Array:
         
         # Checks that 'other' is a scalar of proper type, OR an array.
         # Returns NotImplemented if not. Raises ValueError if shapes do not match.
-        if type(other) != self.values_type():
+        if type(other) != self.values_type:
             
             if not isinstance(other, Array):
                 return NotImplemented
@@ -265,7 +265,7 @@ class Array:
         
         # Checks that 'other' is a scalar of proper type, OR an array.
         # Returns NotImplemented if not. Raises ValueError if shapes do not match.
-        if type(other) != self.values_type():
+        if type(other) != self.values_type:
             
             if not isinstance(other, Array):
                 return NotImplemented
@@ -330,7 +330,10 @@ class Array:
         """
     
         # Checks that 'other' is an Array, and if the shapes matches.
-        if not isinstance(other, Array) or (other.shape != self.shape):
+        if not isinstance(other, Array):
+            return False
+        
+        else if other.shape != self.shape:
             return False
         
         # Checks each element in the arrays individually for inequality.
@@ -365,7 +368,7 @@ class Array:
         
         # Checks that 'other' is a scalar of proper type, OR an array.
         # Raises TypeError if not. Raises ValueError if shapes do not match.
-        if type(other) != self.values_type():
+        if type(other) != self.values_type:
             
             if not isinstance(other, Array):
                 raise TypeError("Other-argument given is not of a valid type.\.")
@@ -417,7 +420,7 @@ class Array:
         if self.values_type == "bool":
             raise TypeError("Array is of type boolean.\n")
         else:
-            return min(self.values_list)
+            return float(min(self.values_list))
 
 
 
@@ -433,4 +436,4 @@ class Array:
         if self.values_type == "bool":
             raise TypeError("Array is of type boolean.\n")
         else:
-            return sum(self.values_list) / len(self.values_list)
+            return float( sum(self.values_list) / len(self.values_list) )

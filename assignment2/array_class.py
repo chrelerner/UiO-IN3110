@@ -25,45 +25,49 @@ class Array:
             ValueError: If the number of values does not fit with the shape.
         """
 
-        # Checks if the values are of valid types
-        
+        # Checks if 'shape' is a tuple.
         if not isinstance(shape, tuple):
-            # Returns informative TypeError.
+            
+            # Raises informative TypeError.
             raise TypeError("Shape argument is not a tuple.\n")
-                
+            
+            
+        # Checks if the elements in 'values' are of either int, float or bool.
         for element in values:
             
             if not isinstance(element, int):
                 if not isinstance(element, float):
                     if not isinstance(element, bool):
-                        #Returns informative TypeError
+                        
+                        #Raises informative TypeError
                         raise TypeError("Argument contained value of type not allowed.\n")
         
+        
+        # Checks that there isn't a combination of types in 'values'.
         values_type = type(values[0])
         
         for element in values:
-            
-            if type(element) != values_type:
-                # Returns informative ValueError.
-                raise ValueError("Array-elements given as argument do not share the same type.\n")
     
+            if type(element) != values_type:
+                
+                # Raises informative ValueError.
+                raise ValueError("Array-elements given as argument do not share the same type.\n")
     
 
         # Checks that the amount of values corresponds to the shape
-        
         if shape[0] != len(values):
-            # Returns informative ValueError
+            
+            # Raises informative ValueError
             raise ValueError("Amount of values given does not correspond to the shape.\n")
 
 
-        # Set class-variables
+        # Sets instance attributes
         self.shape = shape
-        self.value_list = []
+        self.values_list = []
         self.values_type = values_type
         
         for element in values:
-            self.value_list.append(element)
-            
+            self.values_list.append(element)
             
             
             
@@ -71,14 +75,15 @@ class Array:
     def __getitem__(self, index):
         
         if isinstance(index, int):
-            return self.value_list[index]
+            return self.values_list[index]
         else:
-            # Return informative TypeError.
+            
+            # Raises informative TypeError.
             raise TypeError("Index argument should be of type int.\n")
         
         
         
-    # Returns a string of the array in the form of [1, 2, 3, 4,].
+    # Returns a string of the array in the form of [1, 2, 3, 4].
     def __str__(self):
         """Returns a nicely printable string representation of the array.
 
@@ -86,16 +91,19 @@ class Array:
             str: A string representation of the array.
 
         """
-        result = "["
         
-        for element in self.value_list:
-            result += element + ", "
+        result = "["
+    
+        for i in range(self.values_list):
+            
+            result += self.values_list[i] + ", "
+        
+        result = result[:-2] # Removes the last ', '.
         result += "]"
         
         return result
         
-        
-        
+
 
     def __add__(self, other):
         """Element-wise adds Array with another Array or number.
@@ -110,36 +118,38 @@ class Array:
             Array: the sum as a new array.
 
         """
-
-        # check that the method supports the given arguments (check for data type and shape of array)
-        # if the array is a boolean you should return NotImplemented
-
+        
+        # Checks that the Array on the left side of the operator doesn't contain boolean values.
         if self.values_type == "bool":
             return NotImplemented
         
-        # Checks that 'other' is a scalar OR an array of the same shape as self.
-        # Returns NotImplemented if not.
-        if not isinstance(other, (int, float)):
+        # Checks that 'other' is a scalar of proper type, OR an array.
+        # Returns NotImplemented if not. Raises ValueError if shapes do not match.
+        if type(other) != self.values_type():
+            
             if not isinstance(other, Array):
                 return NotImplemented
+            
             if other.shape != self.shape:
-                return NotImplemented
+                
+                # Raises informative ValueError
+                raise ValueError("The shapes of the two Arrays do not match.\n")
         
         
         temp_list = []
         
         # Perform addition by scalar.
-        if isinstance(other, (int, float)):
+        if not isinstance(other, Array):
             
-            for i in range(len(self.value_list)):
+            for i in range(len(self.values_list)):
                 
-                temp_list.append(self.value_list[i] + other)
+                temp_list.append(self.values_list[i] + other)
                 
         # Performs addition by array.
         else:
             
-            for i in range(len(self.value_list)):
-                temp_list.append(self.value_list[i] + other.value_list[i])
+            for i in range(len(self.values_list)):
+                temp_list.append(self.values_list[i] + other.values_list[i])
         
         
         # Returns the result as a new Array.
@@ -165,7 +175,6 @@ class Array:
 
 
 
-
     def __sub__(self, other):
         """Element-wise subtracts an Array or number from this Array.
 
@@ -179,42 +188,43 @@ class Array:
             Array: the difference as a new array.
 
         """
-        
-        # check that the method supports the given arguments (check for data type and shape of array)
-        # if the array is a boolean you should return NotImplemented
-
+            
+        # Checks that the Array on the left side of the operator doesn't contain boolean values.
         if self.values_type == "bool":
             return NotImplemented
         
-        # Checks that 'other' is a scalar OR an array of the same shape as self.
-        # Returns NotImplemented if not.
-        if not isinstance(other, (int, float)):
+        # Checks that 'other' is a scalar of proper type, OR an array.
+        # Returns NotImplemented if not. Raises ValueError if shapes do not match.
+        if type(other) != self.values_type():
+            
             if not isinstance(other, Array):
                 return NotImplemented
+            
             if other.shape != self.shape:
-                return NotImplemented
+                
+                # Raises informative ValueError
+                raise ValueError("The shapes of the two Arrays do not match.\n")
         
         
         temp_list = []
         
         # Perform subtraction by scalar.
-        if isinstance(other, (int, float)):
+        if not isinstance(other, Array):
             
-            for i in range(len(self.value_list)):
+            for i in range(len(self.values_list)):
                 
-                temp_list.append(self.value_list[i] - other)
+                temp_list.append(self.values_list[i] - other)
                 
         # Performs subtraction by array.
         else:
             
-            for i in range(len(self.value_list)):
-                temp_list(self.value_list[i] - other.value_list[i])
+            for i in range(len(self.values_list)):
+                temp_list(self.values_list[i] - other.values_list[i])
         
         
         # Returns the result as a new Array.
         return Array(self.shape, tuple(temp_list))
         
-
 
 
     def __rsub__(self, other):
@@ -234,7 +244,6 @@ class Array:
 
 
 
-
     def __mul__(self, other):
         """Element-wise multiplies this Array with a number or array.
 
@@ -249,41 +258,42 @@ class Array:
 
         """
         
-        # check that the method supports the given arguments (check for data type and shape of array)
-        # if the array is a boolean you should return NotImplemented
-
+        
+        # Checks that the Array on the left side of the operator doesn't contain boolean values.
         if self.values_type == "bool":
             return NotImplemented
         
-        # Checks that 'other' is a scalar OR an array of the same shape as self.
-        # Returns NotImplemented if not.
-        if not isinstance(other, (int, float)):
+        # Checks that 'other' is a scalar of proper type, OR an array.
+        # Returns NotImplemented if not. Raises ValueError if shapes do not match.
+        if type(other) != self.values_type():
+            
             if not isinstance(other, Array):
                 return NotImplemented
+            
             if other.shape != self.shape:
-                return NotImplemented
-        
+                
+                # Raises informative ValueError
+                raise ValueError("The shapes of the two Arrays do not match.\n")
         
         
         temp_list = []
         
         # Perform multiplication by scalar.
-        if isinstance(other, (int, float)):
+        if not isinstance(other, Array):
             
-            for i in range(len(self.value_list)):
+            for i in range(len(self.values_list)):
                 
-                temp_list.append(self.value_list[i] * other)
+                temp_list.append(self.values_list[i] * other)
                 
         # Performs multiplication by array.
         else:
             
-            for i in range(len(self.value_list)):
-                temp_list.append(self.value_list[i] * other.value_list[i])
+            for i in range(len(self.values_list)):
+                temp_list.append(self.values_list[i] * other.values_list[i])
         
         
         # Returns the result as a new Array.
         return Array(self.shape, tuple(temp_list))
-        
         
         
 
@@ -305,7 +315,6 @@ class Array:
 
 
 
-
     def __eq__(self, other):
         """Compares an Array with another Array.
 
@@ -320,13 +329,14 @@ class Array:
 
         """
     
-    
+        # Checks that 'other' is an Array, and if the shapes matches.
         if not isinstance(other, Array) or (other.shape != self.shape):
             return False
         
-        
-        for i in range(len(self.value_list)):
-            if self.value_list[i] != other.value_list[i]:
+        # Checks each element in the arrays individually for inequality.
+        for i in range(len(self.values_list)):
+            
+            if self.values_list[i] != other.values_list[i]:
                 return False
             
         return True
@@ -351,22 +361,29 @@ class Array:
             ValueError: if the shape of self and other are not equal.
 
         """
-
-        if not isinstance(other, (Array, int, float)):
-            raise TypeError("Other-argument given is not of a valid type.\n")
             
-        if self.shape != other.shape:
-            raise ValueError("Array shapes do not match.\n")
+        
+        # Checks that 'other' is a scalar of proper type, OR an array.
+        # Raises TypeError if not. Raises ValueError if shapes do not match.
+        if type(other) != self.values_type():
             
+            if not isinstance(other, Array):
+                raise TypeError("Other-argument given is not of a valid type.\.")
+            
+            if other.shape != self.shape:
+                
+                # Raises informative ValueError
+                raise ValueError("The shapes of the two Arrays do not match.\n")
+        
             
         temp_list = []
         
         # Perform comparison by scalar.
-        if isinstance(other, (int, float)):
+        if not isinstance(other, Array):
             
-            for i in range(len(self.value_list)):
+            for i in range(len(self.values_list)):
                 
-                if self.value_list[i] == other:
+                if self.values_list[i] == other:
                     temp_list.append(True)
                 else:
                     temp_list.append(False)
@@ -374,9 +391,9 @@ class Array:
         # Performs comparison by array.
         else:
             
-            for i in range(len(self.value_list)):
+            for i in range(len(self.values_list)):
                 
-                if self.value_list[i] == other.value_list[i]:
+                if self.values_list[i] == other.values_list[i]:
                     temp_list.append(True)
                 else:
                     temp_list.append(False)
@@ -386,7 +403,6 @@ class Array:
         return Array(self.shape, tuple(temp_list))    
         
 
-        
 
     def min_element(self):
         """Returns the smallest value of the array.
@@ -401,8 +417,7 @@ class Array:
         if self.values_type == "bool":
             raise TypeError("Array is of type boolean.\n")
         else:
-            return min(self.value_list)
-
+            return min(self.values_list)
 
 
 
@@ -418,4 +433,4 @@ class Array:
         if self.values_type == "bool":
             raise TypeError("Array is of type boolean.\n")
         else:
-            return sum(self.value_list) / len(self.value_list)
+            return sum(self.values_list) / len(self.values_list)

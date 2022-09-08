@@ -78,7 +78,7 @@ class Array:
         
         
         
-    # Fix this method with a better representation, like Array((5,), 1, 2, 3, 4, 5).
+    # Returns a string of the array in the form of [1, 2, 3, 4,].
     def __str__(self):
         """Returns a nicely printable string representation of the array.
 
@@ -92,7 +92,7 @@ class Array:
             result += element + ", "
         result += "]"
         
-        print(result)
+        return result
         
         
         

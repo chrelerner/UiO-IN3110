@@ -130,17 +130,24 @@ class Array:
         if self.values_type == bool:
             return NotImplemented
         
-        # Checks that 'other' is a scalar of proper type, OR an array.
-        # Returns NotImplemented if not. Raises ValueError if shapes do not match.
+        
+        # Checks if the type of other doesn't match the type of the current Array.
         if type(other) != self.values_type:
             
+            # Checks if other isn't an Array.
             if not isinstance(other, Array):
                 return NotImplemented
             
-            if other.shape != self.shape:
+            # If other is an array, checks if it isn't an array of the same type.
+            elif self.values_type != other.values_type:
+                 return NotImplemented
+             
+            # If other is an array of the same type, checks to see if the shapes do not match.
+            elif other.shape != self.shape:
                 
                 # Raises informative ValueError
                 raise ValueError("The shapes of the two Arrays do not match.\n")
+                
         
         
         temp_list = []
@@ -207,14 +214,19 @@ class Array:
         if self.values_type == bool:
             return NotImplemented
         
-        # Checks that 'other' is a scalar of proper type, OR an array.
-        # Returns NotImplemented if not. Raises ValueError if shapes do not match.
+        # Checks if the type of other doesn't match the type of the current Array.
         if type(other) != self.values_type:
             
+            # Checks if other isn't an Array.
             if not isinstance(other, Array):
                 return NotImplemented
             
-            if other.shape != self.shape:
+            # If other is an array, checks if it isn't an array of the same type.
+            elif self.values_type != other.values_type:
+                 return NotImplemented
+             
+            # If other is an array of the same type, checks to see if the shapes do not match.
+            elif other.shape != self.shape:
                 
                 # Raises informative ValueError
                 raise ValueError("The shapes of the two Arrays do not match.\n")
@@ -284,14 +296,19 @@ class Array:
         if self.values_type == bool:
             return NotImplemented
         
-        # Checks that 'other' is a scalar of proper type, OR an array.
-        # Returns NotImplemented if not. Raises ValueError if shapes do not match.
+        # Checks if the type of other doesn't match the type of the current Array.
         if type(other) != self.values_type:
             
+            # Checks if other isn't an Array.
             if not isinstance(other, Array):
                 return NotImplemented
             
-            if other.shape != self.shape:
+            # If other is an array, checks if it isn't an array of the same type.
+            elif self.values_type != other.values_type:
+                 return NotImplemented
+             
+            # If other is an array of the same type, checks to see if the shapes do not match.
+            elif other.shape != self.shape:
                 
                 # Raises informative ValueError
                 raise ValueError("The shapes of the two Arrays do not match.\n")
@@ -393,15 +410,20 @@ class Array:
 
         """
             
-        
-        # Checks that 'other' is a scalar of proper type, OR an array.
-        # Raises TypeError if not. Raises ValueError if shapes do not match.
+                
+        # Checks if the type of other doesn't match the type of the current Array.
         if type(other) != self.values_type:
             
+            # Checks if other isn't an Array.
             if not isinstance(other, Array):
-                raise TypeError("Other-argument given is not of a valid type.\.")
+                raise TypeError("Other-argument given is not of a valid type.\n")
             
-            if other.shape != self.shape:
+            # If other is an array, checks if it isn't an array of the same type.
+            elif self.values_type != other.values_type:
+                 raise TypeError("Other-argument given is not of a valid type.\n")
+             
+            # If other is an array of the same type, checks to see if the shapes do not match.
+            elif other.shape != self.shape:
                 
                 # Raises informative ValueError
                 raise ValueError("The shapes of the two Arrays do not match.\n")

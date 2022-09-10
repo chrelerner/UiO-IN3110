@@ -70,6 +70,18 @@ def test_add_1d():
     
     
     # Testing of bool scalar and array addition. Should return NotImplemented.
+    bool_array1 = Array((5,), True, True, True, False, False)
+    bool_array2 = Array((5,), False, False, True, True, False)
+    bool_array3 = Array((5,), 1, 2, 3, 4, 5)
+    bool_scalar = True
+    
+    bool_result1 = bool_array1.__add__(bool_array2)
+    bool_result2 = bool_array1.__add__(bool_scalar)
+    bool_result3 = bool_array3.__add__(bool_array1)
+    
+    assert bool_result1 == NotImplemented, f"test_add_1d bool test 1: NotImplemented expected, got {bool_result1}"
+    assert bool_result2 == NotImplemented, f"test_add_1d bool test 2: NotImplemented expected, got {bool_result2}"
+    assert bool_result3 == NotImplemented, f"test_add_1d bool test 3: NotImplemented expected, got {bool_result3}"
     
 
 
@@ -94,9 +106,9 @@ def test_sub_1d():
     float_array2 = Array((6,), -2.3, -2.1, 3.0, -4.8, 5.2, 2.0)
     float_scalar = 3.5
     
-    float_result1 = float_array1 - float_array2 # Array - Array
-    float_result2 = float_array1 - float_scalar # Array - Scalar
-    float_result3 = float_scalar - float_array1 # Scalar - Array | __rsub__   (Should return Array1 - Scalar)
+    float_result1 = float_array1 - float_array2 # Array1 - Array2
+    float_result2 = float_array1 - float_scalar # Array1 - Scalar
+    float_result3 = float_scalar - float_array1 # Scalar - Array1 | __rsub__   (Should return Array1 - Scalar)
     
     assert (str(float_result1) == "[3.8, -0.9, 2.5, 3.5, -2.6, 2.0]"), f"test_sub_1d float array: [3.8, -0.9, 2.5, 3.5, -2.6, 2.0] expected, got {str(float_result1)}."
     assert (str(float_result2) == "[-2.0, -6.5, 2.0, -4.8, -0.9, 0.5]"), f"test_sub_1d float scalar: [-1.5, -6.5, 2.0, -4.8, -0.9, 0.5] expected, got {str(float_result2)}."
@@ -104,6 +116,18 @@ def test_sub_1d():
     
     
     # Testing of bool scalar and array subtraction. Should return NotImplemented.
+    bool_array1 = Array((5,), True, True, True, False, False)
+    bool_array2 = Array((5,), False, False, True, True, False)
+    bool_array3 = Array((5,), 1, 2, 3, 4, 5)
+    bool_scalar = True
+    
+    bool_result1 = bool_array1.__sub__(bool_array2)
+    bool_result2 = bool_array1.__sub__(bool_scalar)
+    bool_result3 = bool_array3.__sub__(bool_array1)
+    
+    assert bool_result1 == NotImplemented, f"test_sub_1d bool test 1: NotImplemented expected, got {bool_result1}"
+    assert bool_result2 == NotImplemented, f"test_sub_1d bool test 2: NotImplemented expected, got {bool_result2}"
+    assert bool_result3 == NotImplemented, f"test_sub_1d bool test 3: NotImplemented expected, got {bool_result3}"
 
 
 def test_mul_1d():
@@ -137,7 +161,19 @@ def test_mul_1d():
     
     
     # Testing of bool scalar and array multiplication. Should return NotImplemented.
-
+    bool_array1 = Array((5,), True, True, True, False, False)
+    bool_array2 = Array((5,), False, False, True, True, False)
+    bool_array3 = Array((5,), 1, 2, 3, 4, 5)
+    bool_scalar = True
+    
+    bool_result1 = bool_array1.__mul__(bool_array2)
+    bool_result2 = bool_array1.__mul__(bool_scalar)
+    bool_result3 = bool_array3.__mul__(bool_array1)
+    
+    assert bool_result1 == NotImplemented, f"test_mul_1d bool test 1: NotImplemented expected, got {bool_result1}"
+    assert bool_result2 == NotImplemented, f"test_mul_1d bool test 2: NotImplemented expected, got {bool_result2}"
+    assert bool_result3 == NotImplemented, f"test_mul_1d bool test 3: NotImplemented expected, got {bool_result3}"
+    
 
 def test_eq_1d():
     
@@ -165,7 +201,7 @@ def test_eq_1d():
     assert equal_result3 == True, f"test_eq_1d equality 3: True expected, got {str(equal_result3)}."
     
     
-    # Testing unequality of arrays.
+    # Testing inequality of arrays.
     unequal_result1 = array1 == array6
     unequal_result2 = array2 == array4
     unequal_result3 = array3 == array5

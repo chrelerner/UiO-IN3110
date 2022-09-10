@@ -94,9 +94,16 @@ class Array:
         
         result = "["
     
-        for i in range(self.values_list):
+        for i in range(len(self.values_list)):
             
-            result += self.values_list[i] + ", "
+            """
+            if self.values_type == float:
+                formatted_string = format(self.values_list[i], '.2f')
+                result += formatted_string + ", "
+                
+            else:
+            """
+            result += str(self.values_list[i]) + ", "
         
         result = result[:-2] # Removes the last ', '.
         result += "]"
@@ -120,7 +127,7 @@ class Array:
         """
         
         # Checks that the Array on the left side of the operator doesn't contain boolean values.
-        if self.values_type == "bool":
+        if self.values_type == bool:
             return NotImplemented
         
         # Checks that 'other' is a scalar of proper type, OR an array.
@@ -152,8 +159,15 @@ class Array:
                 temp_list.append(self.values_list[i] + other.values_list[i])
         
         
+        # Makes sure floating point numbers are rounded to a maximum of 2 decimals.
+        if self.values_type == float:
+            
+            for i in range(len(temp_list)):
+                temp_list[i] = round(temp_list[i], 2)
+                
+        
         # Returns the result as a new Array.
-        return Array(self.shape, tuple(temp_list))
+        return Array(self.shape, *temp_list)
 
 
     # Same implementation as __add__.
@@ -190,7 +204,7 @@ class Array:
         """
             
         # Checks that the Array on the left side of the operator doesn't contain boolean values.
-        if self.values_type == "bool":
+        if self.values_type == bool:
             return NotImplemented
         
         # Checks that 'other' is a scalar of proper type, OR an array.
@@ -219,11 +233,18 @@ class Array:
         else:
             
             for i in range(len(self.values_list)):
-                temp_list(self.values_list[i] - other.values_list[i])
+                temp_list.append(self.values_list[i] - other.values_list[i])
+        
+        
+        # Makes sure floating point numbers are rounded to a maximum of 2 decimals.
+        if self.values_type == float:
+            
+            for i in range(len(temp_list)):
+                temp_list[i] = round(temp_list[i], 2)
         
         
         # Returns the result as a new Array.
-        return Array(self.shape, tuple(temp_list))
+        return Array(self.shape, *temp_list)
         
 
 
@@ -260,7 +281,7 @@ class Array:
         
         
         # Checks that the Array on the left side of the operator doesn't contain boolean values.
-        if self.values_type == "bool":
+        if self.values_type == bool:
             return NotImplemented
         
         # Checks that 'other' is a scalar of proper type, OR an array.
@@ -292,8 +313,15 @@ class Array:
                 temp_list.append(self.values_list[i] * other.values_list[i])
         
         
+        # Makes sure floating point numbers are rounded to a maximum of 2 decimals.
+        if self.values_type == float:
+            
+            for i in range(len(temp_list)):
+                temp_list[i] = round(temp_list[i], 2)
+        
+        
         # Returns the result as a new Array.
-        return Array(self.shape, tuple(temp_list))
+        return Array(self.shape, *temp_list)
         
         
 
@@ -333,7 +361,7 @@ class Array:
         if not isinstance(other, Array):
             return False
         
-        else if other.shape != self.shape:
+        elif other.shape != self.shape:
             return False
         
         # Checks each element in the arrays individually for inequality.
@@ -403,7 +431,7 @@ class Array:
         
         
         # Returns the result as a new Array.
-        return Array(self.shape, tuple(temp_list))    
+        return Array(self.shape, *temp_list)    
         
 
 
@@ -417,7 +445,7 @@ class Array:
 
         """
 
-        if self.values_type == "bool":
+        if self.values_type == bool:
             raise TypeError("Array is of type boolean.\n")
         else:
             return float(min(self.values_list))
@@ -433,7 +461,9 @@ class Array:
             float: the mean value
         """
 
-        if self.values_type == "bool":
+        if self.values_type == bool:
             raise TypeError("Array is of type boolean.\n")
         else:
-            return float( sum(self.values_list) / len(self.values_list) )
+            result = float( sum(self.values_list) / len(self.values_list) )
+            
+            return round(result, 2)

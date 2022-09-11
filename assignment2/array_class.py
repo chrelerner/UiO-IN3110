@@ -2,6 +2,8 @@
 Array class for assignment 2
 """
 
+from itertools import chain
+
 class Array:
 
     def __init__(self, shape, *values):
@@ -23,6 +25,12 @@ class Array:
             TypeError: If "shape" or "values" are of the wrong type.
             ValueError: If the values are not all of the same type.
             ValueError: If the number of values does not fit with the shape.
+        """
+        
+        """ The beginning of the following block of code which contains error-handling is independent of dimensionality.
+            Dimension aspects in the constructor begins with checking the amount of values in accordance
+            with the shape of the Array.
+            
         """
 
         # Checks if 'shape' is a tuple.
@@ -54,25 +62,77 @@ class Array:
                 raise ValueError("Array-elements given as argument do not share the same type.\n")
     
 
-        # Checks that the amount of values corresponds to the shape
-        if shape[0] != len(values):
+        # Checks that the amount of values corresponds to the shape, by using the total number of values from shape.
+        counter = 0
+        for element in shape:
+            counter *= element
+        
+        if element != len(values):
             
             # Raises informative ValueError
             raise ValueError("Amount of values given does not correspond to the shape.\n")
 
 
         # Sets instance attributes
+        
         self.shape = shape
+        self.values = values
         self.values_list = []
         self.values_type = values_type
         
-        for element in values:
-            self.values_list.append(element)
+        # Array of 1 dimension.
+        if len(shape) == 1:
+        
+            for element in values:
+                self.values_list.append(element)
+        
+        # Array of 2 dimensions.
+        elif len(shape) > 1:
             
+            values_counter = 0 # A counter which follows the correct order in 'values' according to 'shape'.
             
+            for i in range(self.shape[0]):
+                
+                temp_list = [] # A list to store the values in.
+                
+                # Iterates through 'values' with the help of values_counter
+                for j in range(self.shape[1]):
+                    
+                    temp_list.append(self.values[j + values_counter])
+                
+                self.values_list.append(temp_list)
+                
+                # Updates 'values_counter' to follow the start of the next correct list.
+                values_counter += self.shape[1]
+        
+        
+        # Makes a separate Flat-array instance-attribute. Independent of dimensionality.
+        self.flat_array = self.flat_array()
+        
+        
+    
+    def flat_array(self):
+        """Flattens the N-dimensional array of values into a 1-dimensional array.
+        Returns:
+            list: flat list of array values.
+        """
+        
+        flat_array = self.values_list
+        for i in range(len(self.shape[1:])):
+            flat_array = list(chain(*flat_array))
+        return flat_array
+    
+    
             
-    # This method returns the element at the given index of the array.
     def __getitem__(self, index):
+        """Returns the element at the given index of the array.
+        
+        Returns:
+            If the array is of 1 dimension, this method will return the value directly.
+            If the array is of 2 dimensions, this method will return the row at the given index,
+            and this method will be called again for that list (row) separately.
+        
+        """
         
         if isinstance(index, int):
             return self.values_list[index]
@@ -83,7 +143,7 @@ class Array:
         
         
         
-    # Returns a string of the array in the form of [1, 2, 3, 4].
+    # Returns a string of the array in the form of [1, 2, 3, 4] or [[1, 2], [3, 4]].
     def __str__(self):
         """Returns a nicely printable string representation of the array.
 
@@ -93,23 +153,29 @@ class Array:
         """
         
         result = "["
-    
-        for i in range(len(self.values_list)):
-            
-            """
-            if self.values_type == float:
-                formatted_string = format(self.values_list[i], '.2f')
-                result += formatted_string + ", "
-                
-            else:
-            """
-            result += str(self.values_list[i]) + ", "
         
-        result = result[:-2] # Removes the last ', '.
+        
+        for i in self.values_list:
+            
+            # 2 dimensions.
+            if type(i) == list:
+                result += "["
+                
+                for j in i:   
+                    result += str(j) + ", "
+                
+                result = result[:-2]
+                result += "], "
+                
+            # 1 dimension.
+            else:
+                result += str(i) + ", "
+        
+        result = result[:-2] # Removes the last ", ".
         result += "]"
         
         return result
-        
+    
 
 
     def __add__(self, other):
@@ -155,15 +221,15 @@ class Array:
         # Perform addition by scalar.
         if not isinstance(other, Array):
             
-            for i in range(len(self.values_list)):
+            for i in range(len(self.flat_array)):
                 
-                temp_list.append(self.values_list[i] + other)
+                temp_list.append(self.flat_array[i] + other)
                 
         # Performs addition by array.
         else:
             
-            for i in range(len(self.values_list)):
-                temp_list.append(self.values_list[i] + other.values_list[i])
+            for i in range(len(self.flat_array)):
+                temp_list.append(self.flat_array[i] + other.flat_array[i])
         
         
         # Makes sure floating point numbers are rounded to a maximum of 2 decimals.
@@ -237,15 +303,15 @@ class Array:
         # Perform subtraction by scalar.
         if not isinstance(other, Array):
             
-            for i in range(len(self.values_list)):
+            for i in range(len(self.flat_array)):
                 
-                temp_list.append(self.values_list[i] - other)
+                temp_list.append(self.flat_array[i] - other)
                 
         # Performs subtraction by array.
         else:
             
-            for i in range(len(self.values_list)):
-                temp_list.append(self.values_list[i] - other.values_list[i])
+            for i in range(len(self.flat_array)):
+                temp_list.append(self.flat_array[i] - other.flat_array[i])
         
         
         # Makes sure floating point numbers are rounded to a maximum of 2 decimals.
@@ -319,15 +385,15 @@ class Array:
         # Perform multiplication by scalar.
         if not isinstance(other, Array):
             
-            for i in range(len(self.values_list)):
+            for i in range(len(self.flat_array)):
                 
-                temp_list.append(self.values_list[i] * other)
+                temp_list.append(self.flat_array[i] * other)
                 
         # Performs multiplication by array.
         else:
             
-            for i in range(len(self.values_list)):
-                temp_list.append(self.values_list[i] * other.values_list[i])
+            for i in range(len(self.flat_array)):
+                temp_list.append(self.flat_array[i] * other.flat_array[i])
         
         
         # Makes sure floating point numbers are rounded to a maximum of 2 decimals.
@@ -382,9 +448,9 @@ class Array:
             return False
         
         # Checks each element in the arrays individually for inequality.
-        for i in range(len(self.values_list)):
+        for i in range(len(self.flat_array)):
             
-            if self.values_list[i] != other.values_list[i]:
+            if self.flat_array[i] != other.flat_array[i]:
                 return False
             
         return True
@@ -434,9 +500,9 @@ class Array:
         # Perform comparison by scalar.
         if not isinstance(other, Array):
             
-            for i in range(len(self.values_list)):
+            for i in range(len(self.flat_array)):
                 
-                if self.values_list[i] == other:
+                if self.flat_array[i] == other:
                     temp_list.append(True)
                 else:
                     temp_list.append(False)
@@ -444,9 +510,9 @@ class Array:
         # Performs comparison by array.
         else:
             
-            for i in range(len(self.values_list)):
+            for i in range(len(self.flat_array)):
                 
-                if self.values_list[i] == other.values_list[i]:
+                if self.flat_array[i] == other.flat_array[i]:
                     temp_list.append(True)
                 else:
                     temp_list.append(False)
@@ -470,7 +536,7 @@ class Array:
         if self.values_type == bool:
             raise TypeError("Array is of type boolean.\n")
         else:
-            return float(min(self.values_list))
+            return float(min(self.flat_array))
 
 
 
@@ -486,6 +552,6 @@ class Array:
         if self.values_type == bool:
             raise TypeError("Array is of type boolean.\n")
         else:
-            result = float( sum(self.values_list) / len(self.values_list) )
+            result = float( sum(self.flat_array) / len(self.flat_array) )
             
             return round(result, 2)

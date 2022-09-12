@@ -1,13 +1,22 @@
-Helpful notes for completing assignment 2
+Information on the implementation of the Array-class:
 
-Task 3: 
-    - Fix boolean tests for the 1d unit tests in add, sub and mul.
-    - Fix pytest so you can run all the tests, fix every mistake, and begin on 2d arrays.
-    - The *variables argument in Array __init__ has an asterisk which tells python it is a so-called variadic function.
-      Variadic functions take an indefinite amount of arguments, no limit. To pass a varaidic argument in a function call using
-      a list, use the asterisk here aswell. Array((5,1), *list) will treat the list not as an element, but the elements inside as elements.
-    - The type() function does NOT return a string of the type, rather the type itself.
+The class has been implemented for 2-dimensional use, however only two methods vary noticably from a 1d implementation.
+These two methods are the constructor, and __str__. The rest of the methods work exactly as they used to for 1d-arrays.
+Many of the methods in the Array-class share similar code.
 
 
 
-Information on how to run my scripts:
+Information on the unit tests:
+
+The unit tests include detailed comments on what is being tested where. The unit tests do not
+include all possible situations for the array, only the most important situations.
+Also, the unit tests do not check for exceptions where they should be raised, they simply
+check the standard expected values for proper method arguments.
+
+
+
+Information on how to run the scripts:
+
+I haven't made any separate files other than the ones specified in the assignment text. This means that the
+scripts can be run simply by being in the same folder as the two files in a terminal and writing "pytest", or
+running "test_array.py" directly.

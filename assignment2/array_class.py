@@ -128,9 +128,7 @@ class Array:
         """Returns the element at the given index of the array.
         
         Returns:
-            If the array is of 1 dimension, this method will return the value directly.
-            If the array is of 2 dimensions, this method will return the row at the given index,
-            and this method will be called again for that list (row) separately.
+            Depending on Array-dimensions, either a list or a direct value.
         
         """
         
@@ -337,6 +335,19 @@ class Array:
 
         Returns:
             Array: the difference as a new array.
+            
+        
+        Important note for the __rsub__ method:
+            In the case of "scalar - Array", the result will not be "-(Array - scalar)",
+            but simply "Array - scalar". Mathematically speaking this would be incorrect as
+            subtraction is not commutative, but as it hasn't been specified in the assignment 
+            I've decided to not take it into consideration.
+             
+            This could, however, easily be implemented in this method as follows:
+                
+                resulting_array = self.__sub__(other)
+                proper_result = resulting_array * -1
+                return proper_result
 
         """
         return self.__sub__(other)

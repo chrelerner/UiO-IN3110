@@ -281,7 +281,49 @@ def test_mean_1d():
 
 
 def test_add_2d():
-    pass
+
+    # Testing of int scalar and array addition. Not testing commutative properties of array addition.
+    int_array1 = Array((2, 3), 1, -2, 3, -4, 5, -6)
+    int_array2 = Array((2, 3), -6, 5, -4, 3, -2, 1)
+    int_scalar = 4
+    
+    int_result1 = int_array1 + int_array2 # Array1 + Array2
+    int_result2 = int_array1 + int_scalar # Array1 + Scalar
+    int_result3 = int_scalar + int_array1 # Scalar + Array1 | __radd__
+    
+    assert (str(int_result1) == "[[-5, 3, -1], [-1, 3, -5]]"), f"test_add_2d int array: [[-5, 3, 1], [-1, 3, -5]] expected, got {str(int_result1)}."
+    assert (str(int_result2) == "[[5, 2, 7], [0, 9, -2]]"), f"test_add_2d int scalar: [[5, 2, 7], [0, 9, -2]] expected, got {str(int_result2)}."
+    assert (int_result3 == int_result2), f"test_add_2d int _radd_: [[5, 2, 7], [0, 9, -2]] expected, got {str(int_result3)}."
+   
+    
+    # Testing of float scalar and array addition. Not testing commutative properties of array addition.
+    float_array1 = Array((3, 2), 1.5, -3.0, 5.5, -1.3, 2.6, 7.3)
+    float_array2 = Array((3, 2), -2.3, -2.1, 3.0, -4.8, 5.2, 8.2)
+    float_scalar = 3.5
+    
+    float_result1 = float_array1 + float_array2 # Array1 + Array2
+    float_result2 = float_array1 + float_scalar # Array1 + Scalar
+    float_result3 = float_scalar + float_array1 # Scalar + Array1 | __radd__
+    
+    assert (str(float_result1) == "[[-0.8, -5.1], [8.5, -6.1], [7.8, 15.5]]"), f"test_add_2d float array: [[-0.8, -5.1], [8.5, -6.1], [7.8, 15.5]] expected, got {str(float_result1)}."
+    assert (str(float_result2) == "[[5.0, 0.5], [9.0, 2.2], [6.1, 10.8]]"), f"test_add_2d float scalar: [[5.0, 0.5], [9.0, 2.2], [6.1, 10.8]] expected, got {str(float_result2)}."
+    assert (float_result3 == float_result2), f"test_add_2d float _radd_: [[5.0, 0.5], [9.0, 2.2], [6.1, 10.8]] expected, got {str(float_result3)}."
+    
+    
+    # Testing of bool scalar and array addition. Should return NotImplemented.
+    bool_array1 = Array((2, 2), True, True, True, False)
+    bool_array2 = Array((2, 2), False, False, True, True)
+    bool_array3 = Array((2, 2), 1, 2, 3, 4)
+    bool_scalar = True
+    
+    bool_result1 = bool_array1.__add__(bool_array2)
+    bool_result2 = bool_array1.__add__(bool_scalar)
+    bool_result3 = bool_array3.__add__(bool_array1)
+    
+    assert bool_result1 == NotImplemented, f"test_add_1d bool test 1: NotImplemented expected, got {bool_result1}"
+    assert bool_result2 == NotImplemented, f"test_add_1d bool test 2: NotImplemented expected, got {bool_result2}"
+    assert bool_result3 == NotImplemented, f"test_add_1d bool test 3: NotImplemented expected, got {bool_result3}"
+    
 
 
 def test_mult_2d():

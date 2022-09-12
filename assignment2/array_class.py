@@ -63,11 +63,11 @@ class Array:
     
 
         # Checks that the amount of values corresponds to the shape, by using the total number of values from shape.
-        counter = 0
+        counter = 1
         for element in shape:
             counter *= element
         
-        if element != len(values):
+        if counter != len(values):
             
             # Raises informative ValueError
             raise ValueError("Amount of values given does not correspond to the shape.\n")

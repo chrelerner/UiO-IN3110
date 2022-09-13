@@ -1,7 +1,7 @@
 Information on the implementation of the Array-class:
 
-The class has been implemented for 2-dimensional use, however only two methods vary noticably from a 1d implementation.
-These two methods are the constructor, and __str__. The rest of the methods work exactly as they used to for 1d-arrays.
+The class has been implemented for n-dimensional use, however only a few methods vary noticably from a 1d implementation.
+The rest of the methods work exactly as they used to for 1d-arrays. 
 Many of the methods in the Array-class share similar code.
 
 

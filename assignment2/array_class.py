@@ -86,6 +86,11 @@ class Array:
             for element in values:
                 self.values_list.append(element)
         
+        # Array of n dimensions.
+        elif len(shape) > 1:
+            self.values_list = self.n_dimensional_list(self.shape, self.values)
+        
+        """
         # Array of 2 dimensions.
         elif len(shape) > 1:
             
@@ -104,11 +109,84 @@ class Array:
                 
                 # Updates 'values_counter' to follow the start of the next correct list.
                 values_counter += self.shape[1]
-        
+        """
         
         # Makes a separate Flat-array instance-attribute. Independent of dimensionality.
         self.flat_array = self.flat_array()
         
+        
+    def n_dimensional_list(self, shape, values):
+        """This recursive method is made to handle n-dimensional array construction.
+        
+        Returns:
+            Array of arrays, with number of layers decided by size of shape.
+        
+        """
+        
+        result_list = []
+        
+        # Base case
+        if len(shape) == 1:
+            
+            for element in values:
+                result_list.append(element)
+                
+            return result_list
+        
+        # Lowest tier with the actual values not yet reached.
+        else:
+            
+            amount_of_lists = shape[0] # Must append this amount of lists to 'result_list'
+            element_counter = 0
+            next_shape = shape[1:]
+            
+            # For every possible list in values
+            for i in range(amount_of_lists):
+                
+                next_values = []
+                
+                # For every possible element in these lists.
+                for j in range(int(len(values)/amount_of_lists)):
+                    next_values.append(values[element_counter])
+                    element_counter += 1
+                
+                # Retrieves all lists / values of one lower tier, and appends it to the overall result.
+                recursive_result = self.n_dimensional_list(next_shape, next_values)
+                result_list.append(recursive_result)
+            
+            return result_list
+        
+        
+        
+    def n_dimensional_string(self, values_list):
+        """Makes a string of n-dimensional lists recursively.
+        
+        """
+        
+        result_string = "["
+        
+        # Base case
+        if type(values_list[0]) != list:
+            
+            for element in values_list:
+                result_string += str(element) + ", "
+            
+            result_string = result_string[:-2]
+            result_string += "]"
+            
+            return result_string
+            
+        else:
+            
+            for element in values_list:
+                
+                result_string += self.n_dimensional_string(element) + ", "
+            
+            result_string = result_string[:-2]
+            result_string += "]"
+            
+            return result_string
+                
         
     
     def flat_array(self):
@@ -150,30 +228,10 @@ class Array:
 
         """
         
-        result = "["
+        result_string = self.n_dimensional_string(self.values_list)
         
-        
-        for i in self.values_list:
-            
-            # 2 dimensions.
-            if type(i) == list:
-                result += "["
-                
-                for j in i:   
-                    result += str(j) + ", "
-                
-                result = result[:-2]
-                result += "], "
-                
-            # 1 dimension.
-            else:
-                result += str(i) + ", "
-        
-        result = result[:-2] # Removes the last ", ".
-        result += "]"
-        
-        return result
-    
+        return result_string
+
 
 
     def __add__(self, other):

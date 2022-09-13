@@ -464,7 +464,31 @@ def test_mean_2d():
     assert (result1 == 8.83), f"test_mean_1d 1: 8.83 expected, got {result1}."
     assert (result2 == 2.22), f"test_mean_1d 2: 2.22 expected, got {result2}."
     assert (result3 == -2.79), f"test_mean_1d 3: -2.79 expected, got {result3}."
+    
 
+
+def test_str_nd():
+    
+    # Testing arrays of ints.
+    int_array1 = Array((2, 3, 2), 2, 4, 6, -8, 10, 4, -3, -2, 7, 26, -52, 10)
+    int_array1_correct_string = "[[[2, 4], [6, -8], [10, 4]], [[-3, -2], [7, 26], [-52, 10]]]"
+    assert (int_array1_correct_string == str(int_array1)), f"test_str_nd int test 1: [[[2, 4], [6, -8], [10, 4]], [[-3, -2], [7, 26], [-52, 10]]] expected, got {str(int_array1)}."
+    
+    
+    # Testing arrays of floats.
+    float_array1 = Array((3, 2, 2), 5.8, 2.76, 4.43, -5.7, -3.33, 2.87, 2.12, -98.3, 42.44, -12.76, 9.9, 10.12)
+    float_array1_correct_string = "[[[5.8, 2.76], [4.43, -5.7]], [[-3.33, 2.87], [2.12, -98.3]], [[42.44, -12.76], [9.9, 10.12]]]"
+    assert (float_array1_correct_string == str(float_array1)), f"test_str_nd float test 1: [[[5.8, 2.76], [4.43, -5.7]], [[-3.33, 2.87], [2.12, -98.3]], [[42.44, -12.76], [9.9, 10.12]]] expected, got {str(float_array1)}."
+    
+    
+    # Testing arrays of bools.
+    bool_array1 = Array((2, 1, 2, 3), True, True, False, False, True, True, False, False, True, True, False, False)
+    bool_array1_correct_string = "[[[[True, True, False], [False, True, True]]], [[[False, False, True], [True, False, False]]]]"
+    assert (bool_array1_correct_string == str(bool_array1)), f"test_str_nd bool test 1: [[[[True, True, False], [False, True, True]]], [[[False, False, True], [True, False, False]]]] expected, got {str(bool_array1)}."
+      
+
+def test_add_nd():
+    pass
 
 if __name__ == "__main__":
     """
@@ -488,3 +512,7 @@ if __name__ == "__main__":
     test_mult_2d()
     test_same_2d()
     test_mean_2d()
+    
+    # nd tests
+    test_str_nd()
+    test_add_nd()

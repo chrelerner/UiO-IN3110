@@ -487,8 +487,6 @@ def test_str_nd():
     assert (bool_array1_correct_string == str(bool_array1)), f"test_str_nd bool test 1: [[[[True, True, False], [False, True, True]]], [[[False, False, True], [True, False, False]]]] expected, got {str(bool_array1)}."
       
 
-def test_add_nd():
-    pass
 
 if __name__ == "__main__":
     """
@@ -515,4 +513,3 @@ if __name__ == "__main__":
     
     # nd tests
     test_str_nd()
-    test_add_nd()

@@ -12,6 +12,7 @@ The unit tests include detailed comments on what is being tested where. The unit
 include all possible situations for the array, only the most important situations.
 Also, the unit tests do not check for exceptions where they should be raised, they simply
 check the standard expected values for proper method arguments.
+I've added an additional nd-test for the __str__ method.
 
 
 

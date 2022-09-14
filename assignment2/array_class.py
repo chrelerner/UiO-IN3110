@@ -7,18 +7,14 @@ from itertools import chain
 class Array:
 
     def __init__(self, shape, *values):
-        """Initialize an array of 1-dimensionality. Elements can only be of type:
+        """Initializing an array of n-dimensionality. Elements can only be of type:
 
         - int
         - float
         - bool
 
-        Make sure the values and shape are of the correct type.
-
-        Make sure that you check that your array actually is an array, which means it is homogeneous (one data type).
-
         Args:
-            shape (tuple): shape of the array as a tuple. A 1D array with n elements will have shape = (n,).
+            shape (tuple): shape of the array as a tuple.
             *values: The values in the array. These should all be the same data type. Either int, float or boolean.
 
         Raises:
@@ -26,13 +22,7 @@ class Array:
             ValueError: If the values are not all of the same type.
             ValueError: If the number of values does not fit with the shape.
         """
-        
-        """ The beginning of the following block of code which contains error-handling is independent of dimensionality.
-            Dimension aspects in the constructor begins with checking the amount of values in accordance
-            with the shape of the Array.
-            
-        """
-
+    
         # Checks if 'shape' is a tuple.
         if not isinstance(shape, tuple):
             
@@ -77,42 +67,17 @@ class Array:
         
         self.shape = shape
         self.values = values
-        self.values_list = []
         self.values_type = values_type
         
-        # Array of 1 dimension.
-        if len(shape) == 1:
+        # Creating array of n dimensions.
+        self.values_list = self.n_dimensional_list(self.shape, self.values)
         
-            for element in values:
-                self.values_list.append(element)
+        # Computes the string of the array, to be used in '__str__' method.
+        self.values_string = self.n_dimensional_string(self.values_list)
         
-        # Array of n dimensions.
-        elif len(shape) > 1:
-            self.values_list = self.n_dimensional_list(self.shape, self.values)
-        
-        """
-        # Array of 2 dimensions.
-        elif len(shape) > 1:
-            
-            values_counter = 0 # A counter which follows the correct order in 'values' according to 'shape'.
-            
-            for i in range(self.shape[0]):
-                
-                temp_list = [] # A list to store the values in.
-                
-                # Iterates through 'values' with the help of values_counter
-                for j in range(self.shape[1]):
-                    
-                    temp_list.append(self.values[j + values_counter])
-                
-                self.values_list.append(temp_list)
-                
-                # Updates 'values_counter' to follow the start of the next correct list.
-                values_counter += self.shape[1]
-        """
-        
-        # Makes a separate Flat-array instance-attribute. Independent of dimensionality.
+        # Makes a separate Flat-array instance-attribute.
         self.flat_array = self.flat_array()
+        
         
         
     def n_dimensional_list(self, shape, values):
@@ -120,6 +85,11 @@ class Array:
         
         Returns:
             Array of arrays, with number of layers decided by size of shape.
+        
+        As long as 'shape' has more than one element, this method will use the first value
+        to calculate the amount of lists to create. It will then call itself with a new 'shape'
+        where the first value is discarded, and where the 'values' parameter is split into an
+        appropriate size for the recursive call.
         
         """
         
@@ -133,7 +103,7 @@ class Array:
                 
             return result_list
         
-        # Lowest tier with the actual values not yet reached.
+        # The actual values not yet reached.
         else:
             
             amount_of_lists = shape[0] # Must append this amount of lists to 'result_list'
@@ -160,6 +130,14 @@ class Array:
         
     def n_dimensional_string(self, values_list):
         """Makes a string of n-dimensional lists recursively.
+        
+        Returns:
+            str: A string representation of the array.
+            
+        The string will have the form of:
+            1 dimension: [1, 2, 3, 4]
+            
+            multiple dimensions: [[1, 2], [3, 4]]
         
         """
         
@@ -191,8 +169,10 @@ class Array:
     
     def flat_array(self):
         """Flattens the N-dimensional array of values into a 1-dimensional array.
+        
         Returns:
             list: flat list of array values.
+            
         """
         
         flat_array = self.values_list
@@ -219,18 +199,19 @@ class Array:
         
         
         
-    # Returns a string of the array in the form of [1, 2, 3, 4] or [[1, 2], [3, 4]].
+
     def __str__(self):
         """Returns a nicely printable string representation of the array.
 
         Returns:
             str: A string representation of the array.
+            
+        This method uses the 'self.values_string- instance attribute which is
+        created during initialization of the array.
 
         """
         
-        result_string = self.n_dimensional_string(self.values_list)
-        
-        return result_string
+        return self.values_string
 
 
 

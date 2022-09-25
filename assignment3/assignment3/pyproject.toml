@@ -11,11 +11,15 @@ build-backend = "setuptools.build_meta"
 version = "0.1.0"
 requires-python = ">=3.7"
 license = {text = "MIT License"}
-# name = "..."
-# description = "..."
-# readme = "..."
-# dependencies = [
-# ]
+name = "instapy"
+description = "Image filtering. Turn your image of choice into a dramatic grayscale or nostalgic sepia image."
+readme = "README.md"
+dependencies = [
+    "numpy",
+    "numba",
+    "pillow",
+    "line-profiler",
+]
 
 
 [project.scripts]

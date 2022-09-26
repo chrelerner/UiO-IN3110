@@ -2,6 +2,7 @@
 
 from typing import Optional
 import numpy as np
+from PIL import Image
 
 
 def numpy_color2gray(image: np.array) -> np.array:
@@ -13,8 +14,9 @@ def numpy_color2gray(image: np.array) -> np.array:
         np.array: gray_image
     """
 
-    gray_image = np.empty_like(image)
-
+    gray_shape = (image.shape[0], image.shape[1])
+    gray_image = np.empty(gray_shape)
+    
     # Hint: use numpy slicing in order to have fast vectorized code
     
     red = image[:, :, 0]
@@ -22,12 +24,9 @@ def numpy_color2gray(image: np.array) -> np.array:
     blue = image[:, :, 2]
     
     weighted_sum = (red * 0.21) + (green * 0.72) + (blue * 0.07)
-    
-    gray_image[:, :] = weighted_sum[:, :]
-    
+    gray_image[:, :] = weighted_sum[:]
     
     gray_image = gray_image.astype("uint8")
-    
     # Return image (make sure it's the right type!)
     return gray_image
 
@@ -68,3 +67,22 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
 
     # Return image (make sure it's the right type!)
     return sepia_image
+
+if __name__ == "__main__":
+    
+    im = Image.open("leaf.jpg")
+    resized = im.resize((im.width // 2, im.height // 2))
+    leaf_data = np.asarray(resized)
+    leaf_grayscale_data = numpy_color2gray(leaf_data)
+    leaf_grayscale = Image.fromarray(leaf_grayscale_data)
+    leaf_grayscale.save("leaf_grayscale.jpg")
+    
+    
+    im = Image.open("rain_hand.jpg")
+    resized = im.resize((im.width // 2, im.height // 2))
+    rain_hand_data = np.asarray(resized)
+    rain_hand_grayscale_data = numpy_color2gray(rain_hand_data)
+    rain_hand_grayscale = Image.fromarray(rain_hand_grayscale_data)
+    rain_hand_grayscale.save("rain_hand_grayscale.jpg")
+    
+    

@@ -16,7 +16,18 @@ def numpy_color2gray(image: np.array) -> np.array:
     gray_image = np.empty_like(image)
 
     # Hint: use numpy slicing in order to have fast vectorized code
-    ...
+    
+    red = image[:, :, 0]
+    green = image[:, :, 1]
+    blue = image[:, :, 2]
+    
+    weighted_sum = (red * 0.21) + (green * 0.72) + (blue * 0.07)
+    
+    gray_image[:, :] = weighted_sum[:, :]
+    
+    
+    gray_image = gray_image.astype("uint8")
+    
     # Return image (make sure it's the right type!)
     return gray_image
 

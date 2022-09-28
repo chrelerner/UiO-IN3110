@@ -52,10 +52,17 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
 
-    sepia_image = ...
+    width, height = image.shape
+
+    sepia_image = np.array(width, height, 3)
 
     # define sepia matrix (optional: with `k` tuning parameter for bonus task 13)
-    sepia_matrix = ...
+    
+    sepia_matrix = np.array([
+        [ 1 - ((1 - 0.393) * k), 0.769 * k, 0.189 * k],
+        [ 0.349 * k, 1 - ((1 - 0.686) * k), 0.168 * k],
+        [ 0.272 * k, 0.534 * k, 1 - ((1 - 0.131) * k)],
+    ])
 
     # HINT: For version without adaptive sepia filter, use the same matrix as in the pure python implementation
     # use Einstein sum to apply pixel transform matrix
@@ -70,19 +77,12 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
 
 if __name__ == "__main__":
     
-    im = Image.open("leaf.jpg")
-    resized = im.resize((im.width // 2, im.height // 2))
-    leaf_data = np.asarray(resized)
-    leaf_grayscale_data = numpy_color2gray(leaf_data)
-    leaf_grayscale = Image.fromarray(leaf_grayscale_data)
-    leaf_grayscale.save("leaf_grayscale.jpg")
-    
-    
-    im = Image.open("rain_hand.jpg")
-    resized = im.resize((im.width // 2, im.height // 2))
-    rain_hand_data = np.asarray(resized)
-    rain_hand_grayscale_data = numpy_color2gray(rain_hand_data)
-    rain_hand_grayscale = Image.fromarray(rain_hand_grayscale_data)
-    rain_hand_grayscale.save("rain_hand_grayscale.jpg")
+    im = Image.open("test/rain.jpg")
+    #resized = im.resize((im.width // 2, im.height // 2))
+    #data = np.asarray(resized)
+    data = np.asarray(im)
+    filtered_data = numpy_color2gray(data)
+    filtered_im = Image.fromarray(filtered_data)
+    filtered_im.save("rain_grayscale.jpg")
     
     

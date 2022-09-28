@@ -7,9 +7,11 @@ For Task 6.
 """
 import time
 import instapy
-from . import io
+#from . import io
 from typing import Callable
 import numpy as np
+
+from PIL import Image
 
 
 def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
@@ -31,11 +33,23 @@ def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
             The average time (in seconds) to run filter_function(*arguments)
     """
     # run the filter function `calls` times
+
+    measured_times = []
+    
+    for _ in range(calls):
+        start_time = time()
+        filter_function(arguments)
+        end_time = time()
+        measured_times.append(end_time - start_time)
+        
+    average_time = sum(measured_times) / len(measured_times)
+        
+    
     # return the _average_ time of one call
-    ...
+    return average_time
 
 
-def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
+def make_reports(filename: str = "../test/rain.jpg", calls: int = 3):
     """
     Make timing reports for all implementations and filters,
     run for a given image.
@@ -45,27 +59,35 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
     """
 
     # load the image
-    image = ...
+    image = Image.open(filename)
+    image_data = np.asarray(image)
+    
     # print the image name, width, height
-    ...
+    width, height = image.size
+    print("Timing performed using {filename}: {width}x{height}")
+    
     # iterate through the filters
-    filter_names = ...
+    filter_names = ("color2gray", "color2sepia")
     for filter_name in filter_names:
         # get the reference filter function
-        reference_filter = ...
+        reference_filter = getattr(instapy, "python_{filter_name}")
+        
         # time the reference implementation
-        reference_time = ...
+        reference_time = time_one(reference_filter, image_data)
+        
         print(
             f"Reference (pure Python) filter time {filter_name}: {reference_time:.3}s ({calls=})"
         )
         # iterate through the implementations
-        implementations = ...
+        implementations = ("numpy, numba")
         for implementation in implementations:
-            filter = ...
+            filter = getattr(instapy, "{implementation}_{filter_name}")
+            
             # time the filter
-            filter_time = ...
+            filter_time = time_one(filter, image_data)
+            
             # compare the reference time to the optimized time
-            speedup = ...
+            speedup = "joe"
             print(
                 f"Timing: {implementation} {filter_name}: {filter_time:.3}s ({speedup=:.2f}x)"
             )

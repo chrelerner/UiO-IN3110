@@ -28,7 +28,7 @@ def python_color2gray(image: np.array) -> np.array:
     return gray_image
 
 
-def python_color2sepia(image: np.array, k: int) -> np.array:
+def python_color2sepia(image: np.array) -> np.array:
     """Convert rgb pixel array to sepia
 
     Args:
@@ -39,9 +39,9 @@ def python_color2sepia(image: np.array, k: int) -> np.array:
     sepia_image = np.empty_like(image)
     
     sepia_matrix = np.array([
-        [ 1 - ((1 - 0.393) * k), 0.769 * k, 0.189 * k],
-        [ 0.349 * k, 1 - ((1 - 0.686) * k), 0.168 * k],
-        [ 0.272 * k, 0.534 * k, 1 - ((1 - 0.131) * k)],
+        [ 0.393, 0.769, 0.189],
+        [ 0.349, 0.686, 0.168],
+        [ 0.272, 0.534, 0.131],
     ])
     
     
@@ -76,9 +76,9 @@ if __name__ == "__main__":
     #resized = im.resize((im.width // 2, im.height // 2))
     #data = np.asarray(resized)
     data = np.asarray(im)
-    filtered_data = python_color2gray(data)
+    filtered_data = python_color2sepia(data)
     filtered_im = Image.fromarray(filtered_data)
-    filtered_im.save("rain_gray.jpg")
+    filtered_im.save("rain_sepia.jpg")
     
     
     

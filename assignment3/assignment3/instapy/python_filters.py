@@ -28,7 +28,7 @@ def python_color2gray(image: np.array) -> np.array:
     return gray_image
 
 
-def python_color2sepia(image: np.array) -> np.array:
+def python_color2sepia(image: np.array, k: int) -> np.array:
     """Convert rgb pixel array to sepia
 
     Args:
@@ -37,10 +37,34 @@ def python_color2sepia(image: np.array) -> np.array:
         np.array: sepia_image
     """
     sepia_image = np.empty_like(image)
+    
+    sepia_matrix = np.array([
+        [ 1 - ((1 - 0.393) * k), 0.769 * k, 0.189 * k],
+        [ 0.349 * k, 1 - ((1 - 0.686) * k), 0.168 * k],
+        [ 0.272 * k, 0.534 * k, 1 - ((1 - 0.131) * k)],
+    ])
+    
+    
     # Iterate through the pixels
     # applying the sepia matrix
+    
+    for i in range( len(image) ):
+        row = image[i]
+        for j in range(len(row) ):
+            pixel = row[j]
+            
+            red, green, blue = pixel[0], pixel[1], pixel[2]
+            
+            sepia_red = sepia_matrix[0][0] * red + sepia_matrix[0][1] * green + sepia_matrix[0][2] * blue
+            sepia_green = sepia_matrix[1][0] * red + sepia_matrix[1][1] * green + sepia_matrix[1][2] * blue 
+            sepia_blue = sepia_matrix[2][0] * red + sepia_matrix[2][1] * green + sepia_matrix[2][2] * blue
+            
+            sepia_image[i][j][0] = min(255, sepia_red)
+            sepia_image[i][j][1] = min(255, sepia_green)
+            sepia_image[i][j][2] = min(255, sepia_blue)
+            
 
-    ...
+    sepia_image = sepia_image.astype("uint8")
 
     # Return image
     # don't forget to make sure it's the right type!
@@ -48,20 +72,13 @@ def python_color2sepia(image: np.array) -> np.array:
 
 if __name__ == "__main__":
     
-    im = Image.open("leaf.jpg")
-    resized = im.resize((im.width // 2, im.height // 2))
-    leaf_data = np.asarray(resized)
-    leaf_grayscale_data = python_color2gray(leaf_data)
-    leaf_grayscale = Image.fromarray(leaf_grayscale_data)
-    leaf_grayscale.save("leaf_grayscale.jpg")
-    
-    
-    im = Image.open("rain_hand.jpg")
-    resized = im.resize((im.width // 2, im.height // 2))
-    rain_hand_data = np.asarray(resized)
-    rain_hand_grayscale_data = python_color2gray(rain_hand_data)
-    rain_hand_grayscale = Image.fromarray(rain_hand_grayscale_data)
-    rain_hand_grayscale.save("rain_hand_grayscale.jpg")
+    im = Image.open("../test/rain.jpg")
+    #resized = im.resize((im.width // 2, im.height // 2))
+    #data = np.asarray(resized)
+    data = np.asarray(im)
+    filtered_data = python_color2gray(data)
+    filtered_im = Image.fromarray(filtered_data)
+    filtered_im.save("rain_gray.jpg")
     
     
     

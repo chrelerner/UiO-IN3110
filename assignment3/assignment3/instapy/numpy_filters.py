@@ -52,9 +52,9 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
 
-    width, height = image.shape
+    width, height, channels = image.shape
 
-    sepia_image = np.array(width, height, 3)
+    sepia_image = np.array((width, height, channels))
 
     # define sepia matrix (optional: with `k` tuning parameter for bonus task 13)
     
@@ -67,22 +67,23 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
     # HINT: For version without adaptive sepia filter, use the same matrix as in the pure python implementation
     # use Einstein sum to apply pixel transform matrix
     # Apply the matrix filter
-    sepia_image = ...
+    sepia_image = np.einsum('ijk,lk->ijl', image, sepia_matrix)
 
     # Check which entries have a value greater than 255 and set it to 255 since we can not display values bigger than 255
-    ...
+    sepia_image[sepia_image > 255] = 255
 
+    sepia_image = sepia_image.astype("uint8")
     # Return image (make sure it's the right type!)
     return sepia_image
 
 if __name__ == "__main__":
     
-    im = Image.open("test/rain.jpg")
+    im = Image.open("test/leaf.jpg")
     #resized = im.resize((im.width // 2, im.height // 2))
     #data = np.asarray(resized)
     data = np.asarray(im)
-    filtered_data = numpy_color2gray(data)
+    filtered_data = numpy_color2sepia(data, 1)
     filtered_im = Image.fromarray(filtered_data)
-    filtered_im.save("rain_grayscale.jpg")
+    filtered_im.save("test/leaf_sepia.jpg")
     
     

@@ -7,11 +7,9 @@ For Task 6.
 """
 import time
 import instapy
-#from . import io
+from . import io
 from typing import Callable
 import numpy as np
-
-from PIL import Image
 
 
 def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
@@ -59,11 +57,10 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
     """
 
     # load the image
-    image = Image.open(filename)
-    image_data = np.asarray(image)
+    image = io.read_image(filename)
     
     # print the image name, width, height
-    width, height = image.size
+    width, height = image.shape[:2]
     print(
         f"Timing performed using {filename}: {width}x{height}\n"
     )
@@ -75,7 +72,7 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
         reference_filter = instapy.get_filter(filter_name, "python")
         
         # time the reference implementation
-        reference_time = time_one(reference_filter, image_data)
+        reference_time = time_one(reference_filter, image)
         
         print(
             f"Reference (pure Python) filter time {filter_name}: {reference_time:.3}s ({calls=})"
@@ -86,7 +83,7 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
             filter = instapy.get_filter(filter_name, implementation)
             
             # time the filter
-            filter_time = time_one(filter, image_data)
+            filter_time = time_one(filter, image)
             
             # compare the reference time to the optimized time
             speedup = reference_time / filter_time

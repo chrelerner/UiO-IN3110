@@ -72,13 +72,17 @@ def python_color2sepia(image: np.array) -> np.array:
 
 if __name__ == "__main__":
     
-    im = Image.open("../test/rain.jpg")
+    im = Image.open("test/rain.jpg")
     #resized = im.resize((im.width // 2, im.height // 2))
     #data = np.asarray(resized)
     data = np.asarray(im)
     filtered_data = python_color2sepia(data)
     filtered_im = Image.fromarray(filtered_data)
-    filtered_im.save("rain_sepia.jpg")
+    filtered_im.save("test/rain_sepia.jpg")
+    
+    filtered_data = python_color2gray(data)
+    filtered_im = Image.fromarray(filtered_data)
+    filtered_im.save("test/rain_grayscale.jpg")
     
     
     

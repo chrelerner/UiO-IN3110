@@ -19,20 +19,25 @@ def run_filter(
 ) -> None:
     """Run the selected filter"""
     # load the image from a file
-    image = ...
+    im = Image.open(file)
     if scale != 1:
         # Resize image, if needed
-        ...
+        im = im.resize((im.width // scale, im.height // scale))
 
     # Apply the filter
-    ...
-    filtered = ...
+    image = np.asarray(im)
+    filter_method = instapy.get_filter(filter, implementation)
+    filtered = filter_method(image)
     if out_file:
         # save the file
-        ...
+        io.write_image(filtered, out_file)
     else:
         # not asked to save, display it instead
         io.display(filtered)
+
+
+def display_runtime() -> None:
+    ...
 
 
 def main(argv=None):
@@ -47,7 +52,14 @@ def main(argv=None):
     parser.add_argument("-o", "--out", help="The output filename")
 
     # Add required arguments
-    ...
+    parser.add_argument("-g", "--gray", help="Select gray filter") # flag
+    parser.add_argument("-se", "--sepia", help="Select sepia filter") # flag
+    parser.add_argument("-sc", "--scale", help="Scale factor to resize image")
+    parser.add_argument("-i", "--implementation", help="The implementation")
+    
+    # Bonustask - Use separate function and not run_filter().
+    parser.add_argument("-r", "--runtime", help="Display average runtime for filter")
 
     # parse arguments and call run_filter
-    ...
+    args = parser.parge_args()
+    

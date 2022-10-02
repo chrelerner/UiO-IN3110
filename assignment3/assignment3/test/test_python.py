@@ -1,50 +1,74 @@
 from instapy.python_filters import python_color2gray, python_color2sepia
-from PIL import Image
+
+from instapy import io
+
+import numpy.testing as nt
+
 import numpy as np
 
 
-def test_color2gray(image):
+def test_color2gray(image, reference_gray):
     
     # Runs color2gray.
-    image_data = np.asarray(image)
-    image_grayscale_data = python_color2gray(image_data)
+    gray_image = python_color2gray(image)
     
     # Creates variables to be used in assertions.
-    regular_shape = image_data.shape
-    gray_shape = image_grayscale_data.shape
+    regular_shape = image.shape
+    gray_shape = gray_image.shape
     
-    regular_dtype = image_data.dtype
-    gray_dtype = image_grayscale_data.dtype
+    regular_dtype = image.dtype
+    gray_dtype = gray_image.dtype
     
     
     # Asserts shape and type
     assert regular_shape == gray_shape, f"Testing python_color2gray shape: {str(regular_shape)} expected, got {str(gray_shape)}"
     assert regular_dtype == gray_dtype, f"Testing python_color2gray type: {str(regular_dtype)} expected, got {str(gray_dtype)}"
     
-    # Creates a grayscale picture using PIL, to compare with the result from color2gray
-    PIL_image_grayscale_data = image.convert('L')
+    # Asserts pixel values.
+    nt.assert_allclose(
+        gray_image[0:2, 0:2], 
+        reference_gray[0:2, 0:2], 
+        rtol=1e-07, 
+        atol=0, 
+        equal_nan=True, 
+        err_msg='Testing python_color2gray result: Resulting image not valid.',
+    )
+
+
+def test_color2sepia(image, reference_sepia):
     
-    assert np.allclose(image_grayscale_data[0:2, 0:2, :], PIL_image_grayscale_data[0:2, 0:2, :]) == True, "Testing python_color2gray result: Resulting image not valid."
-
-
-def test_color2sepia(image):
     # Runs color2sepia.
-    image_data = np.asarray(image)
-    image_sepia_data = python_color2sepia(image_data)
+    sepia_image = python_color2sepia(image)
     
     # Creates variables to be used in assertions.
-    regular_shape = image_data.shape
-    sepia_shape = image_sepia_data.shape
+    regular_shape = image.shape
+    sepia_shape = sepia_image.shape
     
-    regular_dtype = image_data.dtype
-    sepia_dtype = image_sepia_data.dtype
+    regular_dtype = image.dtype
+    sepia_dtype = sepia_image.dtype
     
     
     # Asserts shape and type
     assert regular_shape == sepia_shape, f"Testing python_color2sepia shape: {str(regular_shape)} expected, got {str(sepia_shape)}"
     assert regular_dtype == sepia_dtype, f"Testing python_color2sepia type: {str(regular_dtype)} expected, got {str(sepia_dtype)}"
     
-    # Creates a grayscale picture using PIL, to compare with the result from color2sepia
-    PIL_image_sepia_data = image.convert('L')
+    # Asserts pixel values.
+    nt.assert_allclose(
+        sepia_image[0:2, 0:2], 
+        reference_sepia[0:2, 0:2], 
+        rtol=1e-07, 
+        atol=0, 
+        equal_nan=True, 
+        err_msg='Testing python_color2gray result: Resulting image not valid.',
+    )
+
+if __name__ == "__main__":
     
-    assert np.allclose(image_sepia_data[0:2, 0:2, :], PIL_image_sepia_data[0:2, 0:2, :]) == True, "Testing python_color2sepia result: Resulting image not valid."
+    image = io.read_image("rain.jpg")
+    gray_image = io.read_image("rain_grayscale.jpg")
+    sepia_image = io.read_image("rain.sepia.jpg")
+    
+    test_color2gray(image.copy(), gray_image)
+
+    test_color2sepia(image.copy(), sepia_image)    
+    

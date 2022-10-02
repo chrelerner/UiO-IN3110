@@ -52,9 +52,7 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
 
-    width, height, channels = image.shape
-
-    sepia_image = np.array((width, height, channels))
+    sepia_image = np.empty_like(image)
 
     # define sepia matrix (optional: with `k` tuning parameter for bonus task 13)
     
@@ -78,12 +76,16 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
 
 if __name__ == "__main__":
     
-    im = Image.open("test/leaf.jpg")
+    im = Image.open("test/rain.jpg")
     #resized = im.resize((im.width // 2, im.height // 2))
     #data = np.asarray(resized)
     data = np.asarray(im)
-    filtered_data = numpy_color2sepia(data, 1)
+    filtered_data = numpy_color2sepia(data)
     filtered_im = Image.fromarray(filtered_data)
-    filtered_im.save("test/leaf_sepia.jpg")
+    filtered_im.save("test/rain_sepia.jpg")
+    
+    filtered_data = numpy_color2gray(data)
+    filtered_im = Image.fromarray(filtered_data)
+    filtered_im.save("test/rain_grayscale.jpg")
     
     

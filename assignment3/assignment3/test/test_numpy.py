@@ -18,14 +18,14 @@ def test_color2gray(image, reference_gray):
     gray_dtype = gray_image.dtype
     
     
-    # Asserts shape and type.
-    assert regular_shape == gray_shape, f"Testing python_color2gray shape: {str(regular_shape)} expected, got {str(gray_shape)}"
+    # Asserts shape and type. Shape for numpy_color2gray should be 2-dimensional.
+    assert regular_shape[:2] == gray_shape, f"Testing python_color2gray shape: {str(regular_shape)} expected, got {str(gray_shape)}"
     assert regular_dtype == gray_dtype, f"Testing python_color2gray type: {str(regular_dtype)} expected, got {str(gray_dtype)}"
     
     # Asserts pixel values.
     nt.assert_allclose(
-        gray_image[0:2, 0:2, :], 
-        reference_gray[0:2, 0:2, :], 
+        gray_image[0:2, 0:2, 0:1], 
+        reference_gray[0:2, 0:2], 
         rtol=1e-07, 
         atol=0, 
         equal_nan=True, 
@@ -52,8 +52,8 @@ def test_color2sepia(image, reference_sepia):
     
     # Asserts pixel values.
     nt.assert_allclose(
-        sepia_image[0:2, 0:2, :], 
-        reference_sepia[0:2, 0:2, :], 
+        sepia_image[0:2, 0:2], 
+        reference_sepia[0:2, 0:2], 
         rtol=1e-07, 
         atol=0, 
         equal_nan=True, 
@@ -67,6 +67,6 @@ if __name__ == "__main__":
     reference_gray = ct.reference_gray()
     reference_sepia = ct.reference_sepia()
     
-    test_color2gray(original_image, reference_gray)
+    test_color2gray(original_image.copy(), reference_gray)
     
-    test_color2sepia(original_image, reference_sepia)
+    test_color2sepia(original_image.copy(), reference_sepia)

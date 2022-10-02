@@ -65,7 +65,7 @@ if __name__ == "__main__":
     
     image = io.read_image("rain.jpg")
     gray_image = io.read_image("rain_grayscale.jpg")
-    sepia_image = io.read_image("rain.sepia.jpg")
+    sepia_image = io.read_image("rain_sepia.jpg")
     
     test_color2gray(image.copy(), gray_image)
 

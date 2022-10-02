@@ -26,7 +26,7 @@ def test_color2gray(image, reference_gray):
     # Asserts pixel values.
     nt.assert_allclose(
         gray_image[:2, :2], 
-        reference_gray[:2, :2, :1],  # Must be restricted to one color channel.
+        reference_gray[:2, :2, 0],  # Must be restricted to one color channel.
         rtol=1e-07, 
         atol=0, 
         equal_nan=True, 
@@ -56,8 +56,7 @@ def test_color2sepia(image, reference_sepia):
     nt.assert_allclose(
         sepia_image[:2, :2], 
         reference_sepia[:2, :2], 
-        rtol=1e-07, 
-        atol=0, 
+        rtol=0, 
         equal_nan=True, 
         err_msg='Testing python_color2sepia result: Resulting image not valid.',
     )

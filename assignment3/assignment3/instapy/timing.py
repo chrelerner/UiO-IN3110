@@ -51,14 +51,16 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
     Args:
         filename (str): the image file to use
     """
-
+    
+    output_file = open("timing-report.txt", "w")
+    
     image = io.read_image(filename)
 
     # Prints the image name, width and height.    
     width, height = image.shape[:2]
-    print(
-        f"Timing performed using {filename}: {width}x{height}"
-    )
+    string1 = f"Timing performed using {filename}: {width}x{height}"
+    output_file.write(string1)
+    print(string1)
     
     # Iterates through the filters.
     filter_names = ("color2gray", "color2sepia")
@@ -67,9 +69,9 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
         
         # Times the reference implementation and prints it.
         reference_time = time_one(reference_filter, image)
-        print(
-            f"\nReference (pure Python) filter time {filter_name}: {reference_time:.3}s ({calls=})"
-        )
+        string2 = f"\nReference (pure Python) filter time {filter_name}: {reference_time:.3}s ({calls=})"
+        output_file.write("\n" + string2)
+        print(string2)
         
         # Iterates through the implementations.
         implementations = ("numpy", "numba")
@@ -79,9 +81,9 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
             
             # Compares the reference time to the optimized time and prints it.
             speedup = reference_time / filter_time
-            print(
-                f"Timing: {implementation} {filter_name}: {filter_time:.3}s ({speedup=:.2f}x)"
-            )
+            string3 = f"Timing: {implementation} {filter_name}: {filter_time:.3}s ({speedup=:.2f}x)"
+            output_file.write("\n" + string3)
+            print(string3)
 
 
 if __name__ == "__main__":

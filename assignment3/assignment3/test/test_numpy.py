@@ -6,6 +6,7 @@ import conftest as ct
 
 
 def test_color2gray(image, reference_gray):
+    """Tests the numpy implementations of color2gray."""
     
     # Runs color2gray.
     gray_image = numpy_color2gray(image)
@@ -24,8 +25,8 @@ def test_color2gray(image, reference_gray):
     
     # Asserts pixel values.
     nt.assert_allclose(
-        gray_image[0:2, 0:2, 0:1], 
-        reference_gray[0:2, 0:2], 
+        gray_image[:2, :2], 
+        reference_gray[:2, :2, :1],  # Must be restricted to one color channel.
         rtol=1e-07, 
         atol=0, 
         equal_nan=True, 
@@ -34,6 +35,7 @@ def test_color2gray(image, reference_gray):
 
 
 def test_color2sepia(image, reference_sepia):
+    """Tests the numpy implementations of color2sepia."""
     
     # Runs color2sepia.
     sepia_image = numpy_color2sepia(image)
@@ -52,8 +54,8 @@ def test_color2sepia(image, reference_sepia):
     
     # Asserts pixel values.
     nt.assert_allclose(
-        sepia_image[0:2, 0:2], 
-        reference_sepia[0:2, 0:2], 
+        sepia_image[:2, :2], 
+        reference_sepia[:2, :2], 
         rtol=1e-07, 
         atol=0, 
         equal_nan=True, 

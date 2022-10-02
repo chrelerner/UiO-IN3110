@@ -14,11 +14,11 @@ def numba_color2gray(image: np.array) -> np.array:
     """
     
     gray_image = np.empty_like(image)
-    # iterate through the pixels, and apply the grayscale transform
     
-    for i in range( len(image) ):
+    # Iterates through all pixels and applies a grayscale transform.
+    for i in range(len(image)):
         row = image[i]
-        for j in range( len(row) ):
+        for j in range(len(row)):
             pixel = row[j]
             
             red, green, blue = pixel[0], pixel[1], pixel[2]
@@ -37,9 +37,7 @@ def numba_color2sepia(image: np.array) -> np.array:
     Returns:
         np.array: sepia_image
     """
-    # Iterate through the pixels
-    # applying the sepia matrix
-
+    
     sepia_image = np.empty_like(image)
     
     sepia_matrix = np.array([
@@ -48,15 +46,11 @@ def numba_color2sepia(image: np.array) -> np.array:
         [ 0.272, 0.534, 0.131],
     ])
     
-    
-    # Iterate through the pixels
-    # applying the sepia matrix
-    
-    for i in range( len(image) ):
+    # Iterates through the pixels and applies a sepia transform.
+    for i in range(len(image)):
         row = image[i]
-        for j in range(len(row) ):
+        for j in range(len(row)):
             pixel = row[j]
-            
             red, green, blue = pixel[0], pixel[1], pixel[2]
             
             sepia_red = sepia_matrix[0][0] * red + sepia_matrix[0][1] * green + sepia_matrix[0][2] * blue
@@ -67,11 +61,7 @@ def numba_color2sepia(image: np.array) -> np.array:
             sepia_image[i][j][1] = min(255, sepia_green)
             sepia_image[i][j][2] = min(255, sepia_blue)
             
-
     sepia_image = sepia_image.astype("uint8")
-
-    # Return image
-    # don't forget to make sure it's the right type!
     return sepia_image
 
 

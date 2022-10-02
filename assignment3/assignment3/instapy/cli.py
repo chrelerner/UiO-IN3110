@@ -44,7 +44,7 @@ def display_runtime(
     filter: str = "color2gray",
     scale: int = 1,        
 ) -> None:
-    
+    """Displays runtime of the selected filter."""
     # Loads the image from a file and scales it if specified
     im = Image.open(file)
     if scale != 1:
@@ -63,7 +63,7 @@ def display_runtime(
         
     runtime = sum(measured_times) / len(measured_times)
     
-    print(f"Average time over 3 runs: {runtime}s")
+    print(f"Average time over 3 runs: {runtime:.3}s")
 
 
 def main(argv=None):
@@ -74,7 +74,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser()
 
     # Filename is positional and required
-    parser.add_argument("file", required=True, help="The filename to apply filter to")
+    parser.add_argument("file", help="The filename to apply filter to")
     parser.add_argument("-o", "--out", help="The output filename")
 
     # Adds mutually exclusive arguments for color2gray and color2sepia.
@@ -87,7 +87,7 @@ def main(argv=None):
     parser.add_argument("-r", "--runtime", action="store_true", help="Display average runtime for filter")
 
     # Parses the arguments and calls run_filter, and display_runtime if specified.
-    args = parser.parge_args()
+    args = parser.parse_args()
     
     if args.sepia:
         run_filter(file = args.file, out_file = args.out, implementation = args.implementation, filter = "color2sepia", scale = args.scale)

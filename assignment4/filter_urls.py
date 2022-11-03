@@ -17,16 +17,21 @@ def find_urls(
     """
     # create and compile regular expression(s)
 
-    urls = ...
+    # Finds all urls in the html text.
+    urls = find_a_href(html)
     # 1. find all the anchor tags, then
     # 2. find the urls href attributes
+    
+    # Gaar igjennom alle urls og strip fragmenter vekk.
 
     # Write to file if requested
     if output:
         print(f"Writing to: {output}")
-        ...
-
-    ...
+        output_file = open(output, "w")
+        for url in urls:
+            output_file.write(f"\n{url}")
+        
+    return urls
 
 
 def find_articles(html: str, output=None) -> set:
@@ -44,6 +49,36 @@ def find_articles(html: str, output=None) -> set:
     if output:
         ...
     ...
+    
+# Function derived from find_img_src
+def find_a_href (html: str):
+    """Find all href attributes of a tags in an HTML string
+
+    Args:
+        html (str): A string containing some HTML.
+
+    Returns:
+        href_set (set): A set of strings containing 'a' URLs
+
+    The set contains every found href attibute of an 'a' tag in the given HTML.
+    """
+    
+    # a_pat finds all the <a alt="..." src="..."> snippets
+    # this finds <a and collects everything up to the closing '>'
+    a_pat = re.compile(r"<a[^>]+>", flags=re.IGNORECASE)
+    
+    # href finds the text between quotes of the `href` attribute
+    href_pat = re.compile(r'href="([^"]+)"', flags=re.IGNORECASE)
+    href_set = set()
+    # first, find all the 'a' tags
+    for a_tag in a_pat.findall(html):
+        # then, find the href attribute of the 'a', if any
+        match = href_pat.search(a_tag)
+        if match:
+            href_set.add(match.group(1))
+            
+    return href_set
+    
 
 
 ## Regex example

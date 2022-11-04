@@ -15,23 +15,26 @@ def find_urls(
     Returns:
         urls (set) : set with all the urls found in html text
     """
-    # create and compile regular expression(s)
 
-    # 1. find all the anchor tags, then
-    # 2. find the urls href attributes
-
-    # Finds all hrefs in the html text.
+    # Finds all the URLs or URL paths without #-fragments.
     hrefs = find_a_href(html)
+    urls = set()
     
-    # Filters out fragments, and adds base URL to beginning of 
-    # uncomplete URLS that start with /.
     for href in hrefs:
-        #Filtrer foerst ut hash. Saa fiks /.
-        ...
-    
-    urls = hrefs
-
-    # Write to file if requested
+        # Combines base URL with URL path.
+        if re.search(r'^/[^/]', href): # If href begins with one /
+            full_url = f"{base_url}{href}"
+            urls.add(full_url)
+            
+        # Adds https protocol to the URL.
+        elif re.search(r'^//', href): # If href begins with //
+            full_url = f"https:{href}"
+            urls.add(full_url)
+            
+        else:
+            urls.add(href)
+        
+    # Writes to file if requested
     if output:
         print(f"Writing to: {output}")
         output_file = open(output, "w")
@@ -48,19 +51,31 @@ def find_articles(html: str, output=None) -> set:
     returns:
         - (set) : a set with urls to all the articles found
     """
+    
     urls = find_urls(html)
+    pattern = r'https://[\w]+.wikipedia.[\w]+/[^:]+' # Regex pattern to detect wikipedia URLs without ;
+    articles = set()
     
-    pattern = ... # Regex pattern to detect wikipedia URLS without ;
-    articles = ...
+    for url in urls:
+        if re.search(pattern, url):
+            articles.add(url)
 
-    # Write to file if wanted
+    # Writes to file if wanted
     if output:
-        ...
-    ...
+        print(f"Writing to: {output}")
+        output_file = open(output, "w")
+        for article in articles:
+            output_file.write(f"\n{article}")
+            
+    return articles
     
+
 # Function derived from find_img_src
 def find_a_href (html: str):
     """Find all href attributes of a tags in an HTML string
+    
+    Filters out fragments of the URLs. If the href attribute
+    only contains a fragment, it will be ignored.
 
     Args:
         html (str): A string containing some HTML.
@@ -71,16 +86,15 @@ def find_a_href (html: str):
     The set contains every found href attibute of an 'a' tag in the given HTML.
     """
     
-    # a_pat finds all the <a alt="..." src="..."> snippets
-    # this finds <a and collects everything up to the closing '>'
+    #This pattern finds <a and collects everything up to the closing '>'
     a_pat = re.compile(r"<a[^>]+>", flags=re.IGNORECASE)
     
-    # href finds the text between quotes of the `href` attribute
-    href_pat = re.compile(r'href="([^"]+)"', flags=re.IGNORECASE)
+    # This pattern finds the text between quotes of the `href` attribute
+    href_pat = re.compile(r'href="([^"#]+)("|#)', flags=re.IGNORECASE)
     href_set = set()
-    # first, find all the 'a' tags
+    
+    # Checks all the 'a' tags for valid href sections.
     for a_tag in a_pat.findall(html):
-        # then, find the href attribute of the 'a', if any
         match = href_pat.search(a_tag)
         if match:
             href_set.add(match.group(1))
@@ -127,5 +141,13 @@ if __name__ == "__main__":
     hrefs = find_a_href(html)
     
     for i in hrefs:
-        print(i + "\n")
+        print(i)
+    
+    print("\n")
+    urls = find_urls(html)
+    
+    for i in urls:
+        print(i)
+        
+        
     

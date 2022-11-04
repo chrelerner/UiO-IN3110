@@ -17,12 +17,19 @@ def find_urls(
     """
     # create and compile regular expression(s)
 
-    # Finds all urls in the html text.
-    urls = find_a_href(html)
     # 1. find all the anchor tags, then
     # 2. find the urls href attributes
+
+    # Finds all hrefs in the html text.
+    hrefs = find_a_href(html)
     
-    # Gaar igjennom alle urls og strip fragmenter vekk.
+    # Filters out fragments, and adds base URL to beginning of 
+    # uncomplete URLS that start with /.
+    for href in hrefs:
+        #Filtrer foerst ut hash. Saa fiks /.
+        ...
+    
+    urls = hrefs
 
     # Write to file if requested
     if output:
@@ -41,8 +48,9 @@ def find_articles(html: str, output=None) -> set:
     returns:
         - (set) : a set with urls to all the articles found
     """
-    urls = ...
-    pattern = ...
+    urls = find_urls(html)
+    
+    pattern = ... # Regex pattern to detect wikipedia URLS without ;
     articles = ...
 
     # Write to file if wanted
@@ -106,3 +114,18 @@ def find_img_src(html: str):
         if match:
             src_set.add(match.group(1))
     return src_set
+
+if __name__ == "__main__":
+    
+    html = """
+    <a href="#fragment-only">anchor link</a>
+    <a id="some-id" href="/relative/path#fragment">relative link</a>
+    <a href="//other.host/same-protocol">same-protocol link</a>
+    <a href="https://example.com">absolute URL</a>
+    """
+    
+    hrefs = find_a_href(html)
+    
+    for i in hrefs:
+        print(i + "\n")
+    

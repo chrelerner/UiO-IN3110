@@ -53,7 +53,7 @@ def find_articles(html: str, output=None) -> set:
     """
     
     urls = find_urls(html)
-    pattern = r'https://[\w]+.wikipedia.[\w]+/[^:]+' # Regex pattern to detect wikipedia URLs without ;
+    pattern = r'https://[a-z.]*wikipedia.org/wiki/[^:]+\b' # Regex pattern to detect wikipedia URLs without :
     articles = set()
     
     for url in urls:
@@ -75,7 +75,7 @@ def find_a_href (html: str):
     """Find all href attributes of a tags in an HTML string
     
     Filters out fragments of the URLs. If the href attribute
-    only contains a fragment, it will be ignored.
+    only contains a URL fragment, it will be ignored.
 
     Args:
         html (str): A string containing some HTML.

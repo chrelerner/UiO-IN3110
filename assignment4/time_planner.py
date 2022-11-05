@@ -68,16 +68,23 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
     data = []
 
     # Extracts the data in table, keeping track of colspan and rowspan
-    rows = ...
+    rows = table.find_all("tr")
     rows = rows[1:]
     for tr in rows:
-        cells = ...
+        cells = tr.find_all("td")
         row = []
         for cell in cells:
-            colspan = ...
-            rowspan = ...
-            ...
-            text = ...
+            
+            colspan = cell.colspan
+            rowspan = cell.rowspan
+            
+            # Ensures that expand_row_col_span() will run properly.
+            if not colspan:
+                colspan = 1
+            if not rowspan:
+                rowspan = 1
+            
+            text = cell.text.strip()
             row.append(
                 TableEntry(
                     text=text,
@@ -92,11 +99,11 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
     all_data = expand_row_col_span(data)
 
     # List of desired columns
-    wanted = ...
+    wanted = ["Date", "Venue", "Type"]
 
     # Filter data and create pandas dataframe
     filtered_data = filter_data(labels, all_data, wanted)
-    df = ...
+    df = pd.DataFrame(filtered_data)
 
     return df
 
@@ -117,7 +124,7 @@ def render_schedule(data: pd.DataFrame) -> str:
         """
         return event_types.get(type_key[:2], type_key)
 
-    ...
+    
 
 
 def strip_text(text: str) -> str:
@@ -152,6 +159,7 @@ def filter_data(keys: list, data: list, wanted: list):
             This is the subset of data in `data`,
             after discarding the columns not in `wanted`.
     """
+    
     ...
 
 

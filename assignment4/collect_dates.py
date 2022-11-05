@@ -49,7 +49,7 @@ def get_date_patterns() -> Tuple[str, str, str]:
     # month should accept month names or month numbers
     month = rf"(?P<month>({jan}|{feb}|{mar}|{apr}|{may}|{jun}|{jul}|{aug}|{sep}|{octo}|{nov}|{dec}))"
     # day should be a number, which may or may not be zero-padded
-    day = r"?P<day>\b([0-2]?\d|3[01])\.?\b"
+    day = r"?P<day>\b([0-2]?\d|3[01])\,?\b"
     
     iso_month = r"?P<iso_month>\b(0\d|1[0-2])"
 
@@ -102,24 +102,50 @@ def find_dates(text: str, output: str = None) -> list:
     year, month, day, iso_month = get_date_patterns()
 
     # Date on format YYYY/MM/DD - ISO
-    ISO = rf"\b{year}-{iso_month}-{day}\b"
+    ISO = rf"\b({year})-({iso_month})-({day})\b"
 
     # Date on format DD/MM/YYYY
-    DMY = rf"{day}\s{month}\s{year}"
+    DMY = rf"({day})\s({month})\s({year})"
 
     # Date on format MM/DD/YYYY
-    MDY = rf"{month}\s{day}\s{year}"
+    MDY = rf"({month})\s({day})\s({year})"
 
     # Date on format YYYY/MM/DD
-    YMD = rf"{year}\s{month}\s{day}"
+    YMD = rf"({year})\s({month})\s({day})"
 
     # list with all supported formats
     formats = [ISO, DMY, MDY, YMD]
     dates = []
 
     # find all dates in any format in text
-    dates_ISO = []
-    ...
+    dates_ISO = re.findall(ISO, text)
+    dates_DMY = re.findall(DMY, text)
+    dates_MDY = re.findall(MDY, text)
+    dates_YMD = re.findall(YMD, text)
+    
+    # These 4 for-loops will convert all dates to valid dates, and 
+    # append the dates to the list 'dates'.
+    # Bruker re.sub for enten reorder eller erstatting.
+    for date_element in dates_ISO:
+        date_element = re.sub(r"-", r"/", date_element)
+        dates.append(date_element)
+        
+    # Reorder required.
+    for date_element in dates_DMY:
+        date_element = re.sub(DMY, r"\3/\2/\1", date_element)
+        date_element = re.sub(r"\s", r"/", date_element)
+    
+    # Reorder required
+    for date_element in dates_MDY:
+        date_element = re.sub(MDY, r"\3/\1/\2", date_element)
+        date_element = re.sub(r",\s", r"", date_element)
+        date_element = re.sub(r"/", r"\s", date_element)
+    
+    for date_element in dates_YMD:
+        date_element = re.sub(r"\s", r"/", date_element)
+        
+    
+    
     # Write to file if wanted
     if output:
         ...

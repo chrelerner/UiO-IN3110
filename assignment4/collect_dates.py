@@ -45,13 +45,13 @@ def get_date_patterns() -> Tuple[str, str, str]:
 
     # Regex to capture days, months and years with numbers
     # year should accept a 4-digit number between at least 1000-2029
-    year = r"?P<year>(1\d\d\d|20[0-2]\d)"
+    year = r"(?P<year>(?:1\d\d\d|20[0-2]\d))"
     # month should accept month names or month numbers
-    month = rf"(?P<month>({jan}|{feb}|{mar}|{apr}|{may}|{jun}|{jul}|{aug}|{sep}|{octo}|{nov}|{dec}))"
+    month = rf"(?P<month>(?:{jan}|{feb}|{mar}|{apr}|{may}|{jun}|{jul}|{aug}|{sep}|{octo}|{nov}|{dec}))"
     # day should be a number, which may or may not be zero-padded
-    day = r"?P<day>([0-2]?\d|3[01])\,?"
+    day = r"(?P<day>(?:[0-2]?\d|3[01])\,?)"
     
-    iso_month = r"?P<iso_month>(0\d|1[0-2])"
+    iso_month = r"(?P<iso_month>0\d|1[0-2])"
 
     return year, month, day, iso_month
 
@@ -98,20 +98,21 @@ def find_dates(text: str, output: str = None) -> list:
         results (list): A list with all the dates found
     """
     
-    # Fetches patterns to use in date formats.
+    # Fetches grouped patterns to use in date formats.
+    # No need to specify the groups in the formats.
     year, month, day, iso_month = get_date_patterns()
 
     # Date on format YYYY/MM/DD - ISO
-    ISO = rf"\b({year})-({iso_month})-({day})\b"
+    ISO = rf"\b{year}-{iso_month}-{day}\b"
 
     # Date on format DD/MM/YYYY
-    DMY = rf"\b({day})\s({month})\s({year})\b"
+    DMY = rf"\b{day}\s{month}\s{year}\b"
 
     # Date on format MM/DD/YYYY
-    MDY = rf"\b({month})\s({day})\s({year})\b"
+    MDY = rf"\b{month}\s{day}\s{year}\b"
 
     # Date on format YYYY/MM/DD
-    YMD = rf"\b({year})\s({month})\s({day})\b"
+    YMD = rf"\b{year}\s{month}\s{day}\b"
 
     # list with all supported formats
     formats = [ISO, DMY, MDY, YMD]
@@ -123,6 +124,8 @@ def find_dates(text: str, output: str = None) -> list:
     dates_MDY = re.findall(MDY, text)
     dates_YMD = re.findall(YMD, text)
     
+    
+    # Fant ut med denne kodebiten at findall finner alle grupper, men ikke gruppe 0.
     print("ISO dates:\n")
     for i in dates_ISO:
         print(i)

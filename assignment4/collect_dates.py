@@ -30,28 +30,28 @@ def get_date_patterns() -> Tuple[str, str, str]:
         year, month, day (tuple): Containing regular expression patterns for each field
     """
 
-    jan = r"\b[jJ]an(?:uary)?\b"
-    feb = r"\b[fF]eb(?:ruary)?\b"
-    mar = r"\b[mM]ar(?:ch)?\b"
-    apr = r"\b[aA]pr(?:il)?\b"
-    may = r"\b[mM]ay\b"
-    jun = r"\b[jJ]un(?:e)?\b"
-    jul = r"\b[jJ]ul(?:y)?\b"
-    aug = r"\b[aA]ug(?:ust)?\b"
-    sep = r"\b[sS]ep(?:ptember)?\b"
-    octo = r"\b[oO]ct(?:ober)?\b"
-    nov = r"\b[nN]ov(?:ember)?\b"
-    dec = r"\b[dD]ec(?:ember)?\b"
+    jan = r"[jJ]an(?:uary)?"
+    feb = r"[fF]eb(?:ruary)?"
+    mar = r"[mM]ar(?:ch)?"
+    apr = r"[aA]pr(?:il)?"
+    may = r"[mM]ay"
+    jun = r"[jJ]un(?:e)?"
+    jul = r"[jJ]ul(?:y)?"
+    aug = r"[aA]ug(?:ust)?"
+    sep = r"[sS]ep(?:ptember)?"
+    octo = r"[oO]ct(?:ober)?"
+    nov = r"[nN]ov(?:ember)?"
+    dec = r"[dD]ec(?:ember)?"
 
     # Regex to capture days, months and years with numbers
     # year should accept a 4-digit number between at least 1000-2029
-    year = r"?P<year>\b(1\d\d\d|20[0-2]\d)\b"
+    year = r"?P<year>(1\d\d\d|20[0-2]\d)"
     # month should accept month names or month numbers
     month = rf"(?P<month>({jan}|{feb}|{mar}|{apr}|{may}|{jun}|{jul}|{aug}|{sep}|{octo}|{nov}|{dec}))"
     # day should be a number, which may or may not be zero-padded
-    day = r"?P<day>\b([0-2]?\d|3[01])\,?\b"
+    day = r"?P<day>([0-2]?\d|3[01])\,?"
     
-    iso_month = r"?P<iso_month>\b(0\d|1[0-2])"
+    iso_month = r"?P<iso_month>(0\d|1[0-2])"
 
     return year, month, day, iso_month
 
@@ -105,13 +105,13 @@ def find_dates(text: str, output: str = None) -> list:
     ISO = rf"\b({year})-({iso_month})-({day})\b"
 
     # Date on format DD/MM/YYYY
-    DMY = rf"({day})\s({month})\s({year})"
+    DMY = rf"\b({day})\s({month})\s({year})\b"
 
     # Date on format MM/DD/YYYY
-    MDY = rf"({month})\s({day})\s({year})"
+    MDY = rf"\b({month})\s({day})\s({year})\b"
 
     # Date on format YYYY/MM/DD
-    YMD = rf"({year})\s({month})\s({day})"
+    YMD = rf"\b({year})\s({month})\s({day})\b"
 
     # list with all supported formats
     formats = [ISO, DMY, MDY, YMD]
@@ -123,6 +123,23 @@ def find_dates(text: str, output: str = None) -> list:
     dates_MDY = re.findall(MDY, text)
     dates_YMD = re.findall(YMD, text)
     
+    print("ISO dates:\n")
+    for i in dates_ISO:
+        print(i)
+    
+    print("\nDMY dates:\n")
+    for i in dates_DMY:
+        print(i)
+        
+    print("\nMDY dates:\n")
+    for i in dates_MDY:
+        print(i)
+        
+    print("\nYMD dates:\n")
+    for i in dates_YMD:
+        print(i)
+    
+    """
     # These 4 for-loops will convert all dates to valid dates, and 
     # append the dates to the list 'dates'.
     # Bruker re.sub for enten reorder eller erstatting.
@@ -149,5 +166,17 @@ def find_dates(text: str, output: str = None) -> list:
     # Write to file if wanted
     if output:
         ...
-
+        
     return dates
+    """
+    
+if __name__ == "__main__":
+    
+    date_text = """
+    DMY: 2 January 2020
+    MDY: February 12, 1954
+    YMD: 2015 March 31
+    ISO: 2022-04-15
+    """
+    
+    find_dates(date_text)

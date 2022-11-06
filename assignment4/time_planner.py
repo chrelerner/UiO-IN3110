@@ -30,12 +30,12 @@ def time_plan(url: str) -> str:
         markdown (str) : string containing the markdown schedule
     """
     # Get the page
-    html = ...
+    html = get_html(url)
     # parse the HTML
-    soup = ...
+    soup = BeautifulSoup(html, "html.parser")
     # locate the table
-    calendar = ...
-    soup_table = ...
+    calendar = soup.find(id="Calendar")
+    soup_table = calendar.find_next("table")
     # extract events into pandas data frame
     df = extract_events(soup_table)
 

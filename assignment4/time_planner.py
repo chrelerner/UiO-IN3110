@@ -75,16 +75,32 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
         row = []
         for cell in cells:
             
-            colspan = cell.colspan
-            rowspan = cell.rowspan
+            print(f"{cell}\n")
+            
+            cell_string = str(cell)
+            
+            colspan_pat = r'colspan="(\d)"'
+            rowspan_pat = r'rowspan="(\d)"'
+            
+            colspan = re.search(colspan_pat, cell_string)
+            rowspan = re.search(rowspan_pat, cell_string)
+            
             
             # Ensures that expand_row_col_span() will run properly.
-            if not colspan:
+            if colspan == None:
                 colspan = 1
-            if not rowspan:
+            else:
+                colspan = int(colspan.group(1))
+
+            if rowspan == None:
                 rowspan = 1
+            else:
+                rowspan = int(rowspan.group(1))
+            
+            print(f"Colspan = {colspan} --- Rowspan = {rowspan}\n")
             
             text = cell.text.strip()
+            
             row.append(
                 TableEntry(
                     text=text,
@@ -103,7 +119,7 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
 
     # Filter data and create pandas dataframe
     filtered_data = filter_data(labels, all_data, wanted)
-    df = pd.DataFrame(filtered_data)
+    df = pd.DataFrame(columns=wanted, data=filtered_data)
 
     return df
 
@@ -160,7 +176,29 @@ def filter_data(keys: list, data: list, wanted: list):
             after discarding the columns not in `wanted`.
     """
     
-    ...
+    # Extracts wanted column numbers.
+    numbers = []
+    for column in wanted:
+        for i in range(len(keys)):
+            if keys[i] == column:
+                numbers.append(i)
+    
+    #new_keys = []
+    #for number in numbers:
+    #    new_keys.append(keys[number])
+    #result.append(new_keys)
+    
+    new_data = []
+    for row in data:
+        new_row = []
+        for number in numbers:
+            new_row.append(row[number])
+        new_data.append(new_row)
+    
+    print(data)
+    print(new_data)
+    
+    return new_data
 
 
 def expand_row_col_span(data):

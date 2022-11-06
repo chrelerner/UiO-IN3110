@@ -75,16 +75,14 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
         row = []
         for cell in cells:
             
-            print(f"{cell}\n")
+            #print(f"{cell}\n")
             
             cell_string = str(cell)
-            
-            colspan_pat = r'colspan="(\d)"'
-            rowspan_pat = r'rowspan="(\d)"'
+            colspan_pat = r'colspan="(\d+)"'
+            rowspan_pat = r'rowspan="(\d+)"'
             
             colspan = re.search(colspan_pat, cell_string)
             rowspan = re.search(rowspan_pat, cell_string)
-            
             
             # Ensures that expand_row_col_span() will run properly.
             if colspan == None:
@@ -97,9 +95,10 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
             else:
                 rowspan = int(rowspan.group(1))
             
-            print(f"Colspan = {colspan} --- Rowspan = {rowspan}\n")
-            
+            print(f"\nColspan = {colspan} --- Rowspan = {rowspan}")
             text = cell.text.strip()
+            
+            print(f"text = {text}\n")
             
             row.append(
                 TableEntry(
@@ -139,7 +138,22 @@ def render_schedule(data: pd.DataFrame) -> str:
         Useful with pandas Series.apply
         """
         return event_types.get(type_key[:2], type_key)
-
+    
+    
+    markdown = f'|{"Date":<23}|{"Venue":<23}|{"Type":<23}|'
+    
+    markdown += f"\n|:----------------------|:----------------------|:----------------------|"
+    
+    for _, row in data.iterrows():
+        
+        stripped_date = strip_text(row["Date"])
+        stripped_venue = strip_text(row["Venue"])
+        stripped_type = strip_text(row["Type"])
+        stripped_type =  expand_event_type(stripped_type)
+        
+        markdown += f"\n|{stripped_date:<23}|{stripped_venue:<23}|{stripped_type:<23}|"
+    
+    return markdown
     
 
 
@@ -190,13 +204,14 @@ def filter_data(keys: list, data: list, wanted: list):
     
     new_data = []
     for row in data:
+        print(row)
         new_row = []
         for number in numbers:
             new_row.append(row[number])
         new_data.append(new_row)
     
-    print(data)
-    print(new_data)
+    #print(data)
+    #print(new_data)
     
     return new_data
 

@@ -201,11 +201,7 @@ def get_players(team_url: str) -> list:
             
             name_cell = cells[2]
             player_text = str(name_cell)
-            
-            name_pat = r"([a-zA-Z-, ]+)"
-            player_name = name_cell.text
-            player_name = re.search(name_pat, player_name)
-            player_name = player_name.group(1)
+            player_name = name_cell.text.strip()
             
             # find name links (a tags)
             a_pat = r'<a href="(/wiki/[a-zA-Z_.()-]+)"\s'
@@ -233,25 +229,45 @@ def get_player_stats(player_url: str, team: str) -> dict:
     print(f"Fetching stats for player in {player_url}")
 
     # Get the table with stats
-    html = ...
-    soup = ...
-    table = ...
+    html = get_html(player_url)
+    soup = BeautifulSoup(html, "html.parser")
+    NBA_regular_season = soup.find(id="NBA")
+    table = NBA_regular_season.find_next("table")
 
-    ...
-    stats = ...
+    stats = {}
 
-    rows = ...
-
+    rows = table.find_all("tr")
+    rows = rows[1:]
     # Loop over rows and extract the stats
     for row in rows:
-        cols = ...
-        ...
+        cells = row.find_all("td")
+        
+        time_text = cells[0].text.strip()
+        team_text = cells[1].text.strip()
+        time_pat = r"(2021.22)"
+        team_pat = rf"({team})"
+        
         # Check correct team (some players change team within season)
-        ...
-
-        # load stats from columns
-        # keys should be 'points', 'assists', etc.
-        ...
+        if re.search(time_pat, time_text) != None and re.search(team_pat, team_text) != None :
+            stat_pat = r"(\d*\.\d+)"
+            
+            # load stats from columns
+            # keys should be 'points', 'assists', etc.
+            rebounds = cells[8].text.strip()
+            rebounds = re.search(stat_pat, rebounds)
+            rebounds = float(rebounds.group(1))
+            
+            assists = cells[9].text.strip()
+            assists = re.search(stat_pat, assists)
+            assists = float(assists.group(1))
+            
+            points = cells[12].text.strip()
+            points = re.search(stat_pat, points)
+            points = float(points.group(1))
+            
+            stats.update({'rebounds':rebounds})
+            stats.update({'assists':assists})
+            stats.update({'points':points})
 
     return stats
 

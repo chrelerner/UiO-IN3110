@@ -19,8 +19,6 @@ month_names = [
     "December",
 ]
 
-...
-
 
 def get_date_patterns() -> Tuple[str, str, str]:
     """Return strings containing regex pattern for year, month, day
@@ -49,7 +47,7 @@ def get_date_patterns() -> Tuple[str, str, str]:
     # month should accept month names or month numbers
     month = rf"(?P<month>(?:{jan}|{feb}|{mar}|{apr}|{may}|{jun}|{jul}|{aug}|{sep}|{octo}|{nov}|{dec}))"
     # day should be a number, which may or may not be zero-padded
-    day = r"(?P<day>(?:[0-2]?\d|3[01])\,?)"
+    day = r"(?P<day>(?:[0-2]?\d|3[01])),?"
     
     iso_month = r"(?P<iso_month>0\d|1[0-2])"
 
@@ -58,9 +56,6 @@ def get_date_patterns() -> Tuple[str, str, str]:
 
 def convert_month(s: str) -> str:
     """Converts a string month to number (e.g. 'September' -> '09'.
-
-    You don't need to use this function,
-    but you may find it useful.
 
     arguments:
         month_name (str) : month name
@@ -73,20 +68,20 @@ def convert_month(s: str) -> str:
 
     # Convert to number as string
     for i in range(len(month_names)):
-        if s == month_names[i]:
-            return f"{i+1}"
+        if s[:3] == month_names[i][:3]:
+            month_number = f"{i+1}"
+            return zero_pad(month_number)
 
 
 def zero_pad(n: str):
     """zero-pad a number string
 
     turns '2' into '02'
-
-    You don't need to use this function,
-    but you may find it useful.
     """
-    
-    return f"0{n}"
+
+    if len(n) == 1:
+        return f"0{n}"
+    return n
 
 
 def find_dates(text: str, output: str = None) -> list:
@@ -103,75 +98,81 @@ def find_dates(text: str, output: str = None) -> list:
     year, month, day, iso_month = get_date_patterns()
 
     # Date on format YYYY/MM/DD - ISO
-    ISO = rf"\b{year}-{iso_month}-{day}\b"
+    ISO = rf"(\b{year}-{iso_month}-{day}\b)"
 
     # Date on format DD/MM/YYYY
-    DMY = rf"\b{day}\s{month}\s{year}\b"
+    DMY = rf"(\b{day}\s{month}\s{year}\b)"
 
     # Date on format MM/DD/YYYY
-    MDY = rf"\b{month}\s{day}\s{year}\b"
+    MDY = rf"(\b{month}\s{day}.?\s{year}\b)"
 
     # Date on format YYYY/MM/DD
-    YMD = rf"\b{year}\s{month}\s{day}\b"
+    YMD = rf"(\b{year}\s{month}\s{day}\b)"
 
-    # list with all supported formats
-    formats = [ISO, DMY, MDY, YMD]
     dates = []
 
-    # find all dates in any format in text
-    dates_ISO = re.findall(ISO, text)
-    dates_DMY = re.findall(DMY, text)
-    dates_MDY = re.findall(MDY, text)
-    dates_YMD = re.findall(YMD, text)
+    # Finds all dates in any format in text
+    dates_ISO = re.finditer(ISO, text)
+    dates_DMY = re.finditer(DMY, text)
+    dates_MDY = re.finditer(MDY, text)
+    dates_YMD = re.finditer(YMD, text)
     
-    
-    # Fant ut med denne kodebiten at findall finner alle grupper, men ikke gruppe 0.
-    print("ISO dates:\n")
-    for i in dates_ISO:
-        print(i)
-    
-    print("\nDMY dates:\n")
-    for i in dates_DMY:
-        print(i)
-        
-    print("\nMDY dates:\n")
-    for i in dates_MDY:
-        print(i)
-        
-    print("\nYMD dates:\n")
-    for i in dates_YMD:
-        print(i)
-    
-    """
     # These 4 for-loops will convert all dates to valid dates, and 
     # append the dates to the list 'dates'.
-    # Bruker re.sub for enten reorder eller erstatting.
-    for date_element in dates_ISO:
-        date_element = re.sub(r"-", r"/", date_element)
-        dates.append(date_element)
+    for element in dates_ISO:
+        element_year = element.group("year")
+        element_month = element.group("iso_month")
+        element_day = element.group("day")
         
-    # Reorder required.
-    for date_element in dates_DMY:
-        date_element = re.sub(DMY, r"\3/\2/\1", date_element)
-        date_element = re.sub(r"\s", r"/", date_element)
-    
-    # Reorder required
-    for date_element in dates_MDY:
-        date_element = re.sub(MDY, r"\3/\1/\2", date_element)
-        date_element = re.sub(r",\s", r"", date_element)
-        date_element = re.sub(r"/", r"\s", date_element)
-    
-    for date_element in dates_YMD:
-        date_element = re.sub(r"\s", r"/", date_element)
+        element_month = zero_pad(element_month)
+        element_day = zero_pad(element_day)
         
+        correct_date = f"{element_year}/{element_month}/{element_day}"
+        dates.append(correct_date)
+    
+    for element in dates_DMY:
+        element_year = element.group("year")
+        element_month = element.group("month")
+        element_day = element.group("day")
+        
+        element_month = convert_month(element_month)        
+        element_day = zero_pad(element_day)
+        
+        correct_date = f"{element_year}/{element_month}/{element_day}"
+        dates.append(correct_date)
     
     
+    for element in dates_MDY:
+        element_year = element.group("year")
+        element_month = element.group("month")
+        element_day = element.group("day")
+        
+        element_month = convert_month(element_month)        
+        element_day = zero_pad(element_day)
+        
+        correct_date = f"{element_year}/{element_month}/{element_day}"
+        dates.append(correct_date)
+    
+    for element in dates_YMD:
+        element_year = element.group("year")
+        element_month = element.group("month")
+        element_day = element.group("day")
+        
+        element_month = convert_month(element_month)        
+        element_day = zero_pad(element_day)
+        
+        correct_date = f"{element_year}/{element_month}/{element_day}"
+        dates.append(correct_date)
+        
     # Write to file if wanted
     if output:
-        ...
+        print(f"Writing to: {output}")
+        output_file = open(output, "w", encoding="utf-8")
+        output_file.write("Found dates:\n")
+        for date in dates:
+            output_file.write(f"\n--- {date}\n")
         
     return dates
-    """
     
 if __name__ == "__main__":
     

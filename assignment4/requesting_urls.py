@@ -20,15 +20,20 @@ def get_html(url: str, params: Optional[Dict] = None, output: Optional[str] = No
             The HTML of the page, as text.
     """
     
-    # passing the optional parameters argument to the get function
+    # Gets the HTML page, and its text string.
     response = requests.get(url, params = params)
     html_str = response.text
 
     if output:
         # If output is specified, the response txt and url get printed to a
         # txt file with the name in `output`
-        output_file = open(output, "w")
-        output_file.write(f"URL: {response.url}\n")
-        output_file.write(f"Output text:\n {html_str}")
+        print("Writing to file")
+        output_file = open(output, "w", encoding="utf-8")
+        output_file.write(f"URL: {url}\n\n")
+        output_file.write(f"HTML text:\n\n {html_str}")
         
     return html_str
+
+if __name__ == "__main__":
+    
+    get_html(url="https://en.wikipedia.org/wiki/Studio_Ghibli", output="out_requesting_urls.txt")

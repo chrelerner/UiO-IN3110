@@ -29,18 +29,18 @@ def time_plan(url: str) -> str:
     return:
         markdown (str) : string containing the markdown schedule
     """
-    # Get the page
+    # Gets the page and parses the HTML
     html = get_html(url)
-    # parse the HTML
     soup = BeautifulSoup(html, "html.parser")
-    # locate the table
+    
+    # Locates the table and extracts its data.
     calendar = soup.find(id="Calendar")
     soup_table = calendar.find_next("table")
-    # extract events into pandas data frame
     df = extract_events(soup_table)
 
-    # Write the schedule markdown
-    return render_schedule(df)
+    # Renders the markdown and returns it.
+    markdown = render_schedule(df)
+    return markdown
 
 
 @dataclass
@@ -75,30 +75,23 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
         row = []
         for cell in cells:
             
-            #print(f"{cell}\n")
-            
             cell_string = str(cell)
             colspan_pat = r'colspan="(\d+)"'
             rowspan_pat = r'rowspan="(\d+)"'
             
             colspan = re.search(colspan_pat, cell_string)
             rowspan = re.search(rowspan_pat, cell_string)
+            text = cell.text.strip()
             
-            # Ensures that expand_row_col_span() will run properly.
+            # Ensures that colspan and rowspan are defined for later use.
             if colspan == None:
                 colspan = 1
             else:
                 colspan = int(colspan.group(1))
-
             if rowspan == None:
                 rowspan = 1
             else:
                 rowspan = int(rowspan.group(1))
-            
-            print(f"\nColspan = {colspan} --- Rowspan = {rowspan}")
-            text = cell.text.strip()
-            
-            print(f"text = {text}\n")
             
             row.append(
                 TableEntry(
@@ -108,15 +101,14 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
                 )
             )
         data.append(row)
-    # at this point `data` should be a table (list of lists)
-    # where each item is a TableEntry with row/colspan properties
-    # expand TableEntries into a dense table
+        
+    # Expands 'data' into a dense table
     all_data = expand_row_col_span(data)
 
     # List of desired columns
     wanted = ["Date", "Venue", "Type"]
 
-    # Filter data and create pandas dataframe
+    # Filters data and creates pandas dataframe
     filtered_data = filter_data(labels, all_data, wanted)
     df = pd.DataFrame(columns=wanted, data=filtered_data)
 
@@ -139,11 +131,9 @@ def render_schedule(data: pd.DataFrame) -> str:
         """
         return event_types.get(type_key[:2], type_key)
     
-    
-    markdown = f'|{"Date":<23}|{"Venue":<23}|{"Type":<23}|'
-    
-    markdown += f"\n|:----------------------|:----------------------|:----------------------|"
-    
+    # Makes all the strings required for the markdown, with added whitespace-padding.
+    markdown = f'\n|{"Date":<23}|{"Venue":<23}|{"Type":<23}|'
+    markdown += "\n|:----------------------|:----------------------|:----------------------|"
     for _, row in data.iterrows():
         
         stripped_date = strip_text(row["Date"])
@@ -153,15 +143,12 @@ def render_schedule(data: pd.DataFrame) -> str:
         
         markdown += f"\n|{stripped_date:<23}|{stripped_venue:<23}|{stripped_type:<23}|"
     
+    markdown += "\n"
     return markdown
     
 
-
 def strip_text(text: str) -> str:
     """Gets rid of cruft from table cells, footnotes and setting limit to 20 chars
-
-    It is not required to use this function,
-    but it may be useful.
 
     arguments:
         text (str) : string to fix
@@ -176,9 +163,6 @@ def strip_text(text: str) -> str:
 
 def filter_data(keys: list, data: list, wanted: list):
     """Filters away the columns not specified in wanted argument
-
-    It is not required to use this function,
-    but it may be useful.
 
     arguments:
         keys (list of strings) : list of all column names
@@ -197,30 +181,19 @@ def filter_data(keys: list, data: list, wanted: list):
             if keys[i] == column:
                 numbers.append(i)
     
-    #new_keys = []
-    #for number in numbers:
-    #    new_keys.append(keys[number])
-    #result.append(new_keys)
-    
+    # Extracts wanted columns from 'data' using wanted column numbers.
     new_data = []
     for row in data:
-        print(row)
         new_row = []
         for number in numbers:
             new_row.append(row[number])
         new_data.append(new_row)
-    
-    #print(data)
-    #print(new_data)
     
     return new_data
 
 
 def expand_row_col_span(data):
     """Applies row/colspan to tabular data
-
-    It is not required to use this function,
-    but it may be useful.
 
     - Copies cells with colspan to columns to the right
     - Copies cells with rowspan to rows below

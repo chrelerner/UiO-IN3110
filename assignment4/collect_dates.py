@@ -104,7 +104,7 @@ def find_dates(text: str, output: str = None) -> list:
     DMY = rf"(\b{day}\s{month}\s{year}\b)"
 
     # Date on format MM/DD/YYYY
-    MDY = rf"(\b{month}\s{day}.?\s{year}\b)"
+    MDY = rf"(\b{month}\s{day}\s{year}\b)"
 
     # Date on format YYYY/MM/DD
     YMD = rf"(\b{year}\s{month}\s{day}\b)"

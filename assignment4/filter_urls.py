@@ -58,7 +58,7 @@ def find_articles(html: str, output=None) -> set:
     # Finds the URLs and defines patterns to search with.
     urls = find_urls(html)
     pattern_1 = r'https://[a-z.]*wikipedia.org/wiki/(.+)' # Regex pattern to detect wikipedia URLs
-    pattern_2 = r':' # Regex pattern to filer out URLs with ':' at the end.
+    pattern_2 = r':' # Regex pattern to filter out URLs with ':' at the end.
     articles = set()
     
     for url in urls:

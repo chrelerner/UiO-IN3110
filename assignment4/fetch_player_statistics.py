@@ -255,7 +255,7 @@ def get_players(team_url: str) -> list:
     """
     print(f"Finding players in {team_url}")
 
-    # Get the table
+    # Gets the table
     html = get_html(team_url)
     soup = BeautifulSoup(html, "html.parser")
     roster = soup.find(id="Roster")
@@ -263,39 +263,32 @@ def get_players(team_url: str) -> list:
 
     players = []
 
-    # Loop over every row and get the names from roster
+    # Loops over every row and get the names from roster
     rows = table.find_all("tr")
-    
     for row in rows:
         # Get the columns
         cells = row.find_all("td")
         
+        # Makes sure we are looking at the correct type of row with 7 columns.
         if len(cells) == 7:
             
             name_cell = cells[2]
             player_text = str(name_cell)
             player_name = name_cell.text.strip()
             
-            # find name links (a tags)
+            # Finds name links (a tags)
             a_pat = r"(<a[^>]+>)"
             href_pat = r'href="([^"]+)"'
-            
             a_match = re.search(a_pat, player_text)
             href_match = re.search(href_pat, a_match.group(1))
-            #player_url = re.search(a_pat, player_text_href)
-            
-            # For debugging purposes.
-            if href_match == None:
-                print(f"\nplayer text = {player_text}\n")
             
             player_url = f"https://en.wikipedia.org{href_match.group(1)}"
-            # and add to players a dict with
-            # {'name':, 'url':}
+            
+            # Adds players to a dict with {'name':, 'url':}
             player_dict = {'name':player_name, 'url':player_url}
             players.append(player_dict)
 
-    # return list of players
-
+    # return the list of players
     return players
 
 
@@ -313,12 +306,11 @@ def get_player_stats(player_url: str, team: str) -> dict:
     html = get_html(player_url)
     soup = BeautifulSoup(html, "html.parser")
     NBA_regular_season = soup.find(id="NBA")
-    
     if NBA_regular_season == None:
         NBA_regular_season = soup.find(id="Regular_season")
-    
     table = NBA_regular_season.find_next("table")
 
+    # Defines the dictionary which will contain the statistics.
     stats = {}
 
     rows = table.find_all("tr")
@@ -332,12 +324,11 @@ def get_player_stats(player_url: str, team: str) -> dict:
         time_pat = r"(2021.22)"
         team_pat = rf"({team})"
         
-        # Check correct team (some players change team within season)
+        # Checks correct team (some players change team within season)
         if re.search(time_pat, time_text) != None and re.search(team_pat, team_text) != None :
             stat_pat = r"(\d*\.\d+)"
             
-            # load stats from columns
-            # keys should be 'points', 'assists', etc.
+            # Loads the stats 'points', 'rebounds' and 'assists' from the columns
             rebounds = cells[8].text.strip()
             rebounds = re.search(stat_pat, rebounds)
             rebounds = float(rebounds.group(1))

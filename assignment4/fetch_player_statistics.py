@@ -36,14 +36,24 @@ def find_best_players(url: str) -> None:
     # gets the teams
     teams = get_teams(url)
     # assert len(teams) == 8
+    assert len(teams) == 8, f"Testing length of teams: Expected 8, got {len(teams)}."
 
     # Gets the player for every team and stores in dict (get_players)
-    all_players = ...
+    all_players = {}
+    for team in teams:
+        all_players[team["name"]] = get_players(team["url"])
 
     # get player statistics for each player,
     # using get_player_stats
-    for team, players in all_players.items():
-        ...
+    for team, players in all_players.items(): # Team string as value, players dict as key.
+        for player in players: # Player string as key.
+            player_stats = get_player_stats(player["url"], team)
+            
+            # Simply appends the stats to the 'player' dictionary.
+            for stat, number in player_stats.items(): # Stat string as key, number float as value
+                player[stat] = number  
+
+    # print(f"All players dict:\n {all_players}\n")
 
     # at this point, we should have a dict of the form:
     # {
@@ -204,10 +214,18 @@ def get_players(team_url: str) -> list:
             player_name = name_cell.text.strip()
             
             # find name links (a tags)
-            a_pat = r'<a href="(/wiki/[a-zA-Z_.()-]+)"\s'
+            a_pat = r"(<a[^>]+>)"
+            href_pat = r'href="([^"]+)"'
             
-            player_url = re.search(a_pat, player_text)
-            player_url = f"https://en.wikipedia.org{player_url.group(1)}"
+            a_match = re.search(a_pat, player_text)
+            href_match = re.search(href_pat, a_match.group(1))
+            #player_url = re.search(a_pat, player_text_href)
+            
+            # For debugging purposes.
+            if href_match == None:
+                print(f"\nplayer text = {player_text}\n")
+            
+            player_url = f"https://en.wikipedia.org{href_match.group(1)}"
             # and add to players a dict with
             # {'name':, 'url':}
             player_dict = {'name':player_name, 'url':player_url}
@@ -232,6 +250,10 @@ def get_player_stats(player_url: str, team: str) -> dict:
     html = get_html(player_url)
     soup = BeautifulSoup(html, "html.parser")
     NBA_regular_season = soup.find(id="NBA")
+    
+    if NBA_regular_season == None:
+        NBA_regular_season = soup.find(id="Regular_season")
+    
     table = NBA_regular_season.find_next("table")
 
     stats = {}
@@ -265,9 +287,9 @@ def get_player_stats(player_url: str, team: str) -> dict:
             points = re.search(stat_pat, points)
             points = float(points.group(1))
             
-            stats.update({'rebounds':rebounds})
-            stats.update({'assists':assists})
-            stats.update({'points':points})
+            stats["rebounds"] = rebounds
+            stats["assists"] = assists
+            stats["points"] = points
 
     return stats
 

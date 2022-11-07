@@ -33,29 +33,25 @@ def find_best_players(url: str) -> None:
     returns:
         - None
     """
-    # gets the teams
+    # Gets the teams
     teams = get_teams(url)
-    # assert len(teams) == 8
     assert len(teams) == 8, f"Testing length of teams: Expected 8, got {len(teams)}."
 
-    # Gets the player for every team and stores in dict (get_players)
+    # Gets the player for every team and stores in dict.
     all_players = {}
     for team in teams:
         all_players[team["name"]] = get_players(team["url"])
 
-    # get player statistics for each player,
-    # using get_player_stats
-    for team, players in all_players.items(): # Team string as value, players dict as key.
-        for player in players: # Player string as key.
+    # Gets player statistics for each player.
+    for team, players in all_players.items(): # 'players' is a list of dicts
+        for player in players: # 'player' is a dict of {'name': player_name, 'url': player_url}
             player_stats = get_player_stats(player["url"], team)
             
             # Simply appends the stats to the 'player' dictionary.
-            for stat, number in player_stats.items(): # Stat string as key, number float as value
+            for stat, number in player_stats.items():
                 player[stat] = number  
 
-    #print(f"All players dict:\n {all_players}\n")
-
-    # at this point, we should have a dict of the form:
+    # 'all_players' is now of the form:
     # {
     #     "team name": [
     #         {
@@ -69,29 +65,26 @@ def find_best_players(url: str) -> None:
     #     ]
     # }
 
-    # Select top 3 for each team by points:
-    best = {}
-    top_stat = ...
-    for team, players in all_players.items():
-        # Sort and extract top 3 based on points
-        top_3 = []
-        top_sum = 0
-        for player in players:
-            
-            #print(f"\nplayer dict = {player}\n")
-            
-            if len(player) == 2: # Stats are missing
-                pass
-            else:
-                stat_sum = player["points"] + player["assists"] + player["rebounds"]
-                if stat_sum >= top_sum:
-                    top_sum = stat_sum
-                    top_3.insert(0, player)
-        
-        best[team] = top_3[:3]
-
+    # Selects top 3 player for each team by stat and plots the results.
     stats_to_plot = ["points", "assists", "rebounds"]
     for stat in stats_to_plot:
+        
+        best = {}
+        for team, players in all_players.items():
+            # Sorts and extracts top 3 based on stat
+            top_3 = []
+            top_sum = 0
+            for player in players:
+                if len(player) == 2: # Stats are missing
+                    player[stat] = 0
+                    top_3.append(player)
+                else:
+                    player_score = player[stat]
+                    if player_score >= top_sum:
+                        top_sum = player_score
+                        top_3.insert(0, player)
+            best[team] = top_3[:3]
+            
         plot_best(best, stat=stat)
 
 
@@ -128,9 +121,10 @@ def plot_best(best: Dict[str, List[Dict]], stat: str = "points") -> None:
     
     color_count = 0
 
-    # iterate through each team and the
+    # Iterates through each team and the players
     for team, players in best.items():
-        # pick the color for the team, from the table above
+        
+        # Picks a color from the team based on 'color_count'
         color = ""
         if color_count == 0:
             color = "blue"
@@ -138,36 +132,40 @@ def plot_best(best: Dict[str, List[Dict]], stat: str = "points") -> None:
         else:
             color = "red"
             color_count -= 1
-        # collect the points and name of each player on the team
-        # you'll want to repeat with other stats as well
+        
+        # Collects the stat and name of each player on the team
         stat_scores = []
         names = []
         for player in players:
             names.append(player["name"])
             stat_scores.append(player[stat])
-        # record all the names, for use later in x label
+            
+        # Records all the names, for use later in x label
         all_names.extend(names)
 
-        # the position of bars is shifted by the number of players so far
+        # The position of bars is shifted by the number of players so far
         x = range(count_so_far, count_so_far + len(players))
         count_so_far += len(players)
-        # make bars for this team's players points,
-        # with the team name as the label
+        
+        # Makes bars for this team's players points with the team name as the label
         bars = plt.bar(x, stat_scores, color=color, label=team)
-        # add the value as text on the bars
+        
+        # Adds the value as text on the bars
         plt.bar_label(bars)
-        
-        
 
-    # use the names, rotated 90 degrees as the labels for the bars
+    # Uses the names, rotated 90 degrees as the labels for the bars
     plt.xticks(range(len(all_names)), all_names, rotation=90)
-    # add the legend with the colors  for each team
+    
+    # Adds the legend with the colors  for each team
     plt.legend(loc=0)
-    # turn off gridlines
+    
+    # Turns off gridlines
     plt.grid(False)
-    # set the title
+    
+    # Sets the title
     plt.title(f"{stat} per game")
-    # save the figure to a 
+    
+    # Save the figure to a file
     plt.show()
     filename = f"{stats_dir}/{stat}.png"
     print(f"Creating {filename}")

@@ -29,9 +29,27 @@ def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.Da
     ...
     """
     if date is None:
-        date = ...
-    url = ...
-    ...
+        date = datetime.date.today()
+        
+    # Asserts date is after 2nd of October 2022.
+    assert_date = datetime.date(2022, 10, 2)
+    assert date > assert_date
+    
+    # Fetches the information from the API.
+    api = "https://www.hvakosterstrommen.no/strompris-api"
+    url = f"{api}/b2/prices/{date.year}/{date.month}-{date.day}_{location}.json"
+    r = requests.get(url)
+    if not 200 <= r.status_code < 300:
+        # Do error handling.
+        ...
+    
+    # Inserts the information gathered into a DataFrame.
+    data = r.json()
+    data = ...
+    df = pd.DataFrame.from_dict(data)
+    df["date"] = pd.to_datetime(df["date"])
+    
+    return df
 
 
 # LOCATION_CODES maps codes ("NO1") to names ("Oslo")

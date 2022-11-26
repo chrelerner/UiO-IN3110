@@ -20,12 +20,12 @@ requests_cache.install_cache()
 
 
 # task 5.1:
-    
+
 def prepare_dict_information(data_dict: dict) -> dict:
     """Fetches the entries 'time_start' and 'NOKJ_per_kwh' from an API dict.
-    
+
     This function is only to be used in the fetch_day_prices() function.
-    
+
     Arguments:
         data_dict (dict):
             Dictionary with price-information for
@@ -47,7 +47,7 @@ def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.Da
     This function will fetch all the prices for one location of one day
     and store these in a dataframe with two column for time and price.
     The dataframe returned should consist of 24 rows of data (24 hours).
-    
+
     Arguments:
         date (datetime.date):
             The date from which information on prices should be fetched.
@@ -59,29 +59,33 @@ def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.Da
     """
     if date is None:
         date = datetime.date.today()
-        
+
     # Asserts date is after 2nd of October 2022.
     assert date > datetime.date(2022, 10, 2)
-    
+
     # Fetches the information from the API.
     api = "https://www.hvakosterstrommen.no/strompris-api"
     url = f"{api}/b2/prices/{date.year}/{date.month}-{date.day}_{location}.json"
     r = requests.get(url)
     if not 200 <= r.status_code < 300:
         raise ValueError(f"Request unsuccessful with status-code: {r.status_code}")
-    
+
     # Takes the information we want from the API and puts it into a dataframe.
     data = r.json()
     prepared_data = [prepare_dict_information(data_dict) for data_dict in data]
     df = pd.DataFrame.from_dict(prepared_data)
     df["time_start"] = pd.to_datetime(df["time_start"], utc=True).dt.tz_convert("Europe/Oslo")
-    
+
     return df
 
 
 # LOCATION_CODES maps codes ("NO1") to names ("Oslo")
 LOCATION_CODES = {
-    ...
+    'NO1': 'Oslo',
+    'NO2': 'Kristiansand',
+    'NO3': 'Trondheim',
+    'NO4': 'Tromsø',
+    'NO5': 'Bergen',
 }
 
 # task 1:
@@ -98,9 +102,25 @@ def fetch_prices(
     ...
     """
     if end_date is None:
-        end_date = ...
+        end_date = datetime.date.today()
 
-    ...
+    number_of_days = datetime.timedelta(days=(days - 1))
+    start_date = end_date - number_of_days
+
+    result_df = pd.Dataframe  # Creates empty dataframe to concatenate results.
+    for i in range(days):
+        day_counter = datetime.timedelta(days=i)
+        correct_date = start_date + day_counter
+        for location in locations:
+            date_df = fetch_day_prices(correct_date, location)
+
+            # Adds additional columns for location name and code,
+            # and concatenates it to 'result_df'.
+            date_df["location_code"] = location
+            date_df["location"] = LOCATION_CODES[location]
+            pd.concat([result_df, date_df])
+
+    return result_df
 
 
 # task 5.1:

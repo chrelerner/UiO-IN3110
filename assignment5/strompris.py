@@ -9,6 +9,7 @@ Assignment 5
 import datetime
 
 import altair as alt
+alt.renderers.enable('altair_viewer')
 import pandas as pd
 import requests
 import requests_cache
@@ -147,7 +148,13 @@ def plot_prices(df: pd.DataFrame) -> alt.Chart:
 
     Make sure to document arguments and return value...
     """
-    ...
+    chart = alt.Chart(df).mark_line().encode(
+        x="time_start",
+        y="NOK_per_kWh",
+        color="location"
+    )
+    chart.show()
+    return chart
 
 
 # Task 5.4

@@ -20,34 +20,61 @@ requests_cache.install_cache()
 
 
 # task 5.1:
+    
+def prepare_dict_information(data_dict: dict) -> dict:
+    """Fetches the entries 'time_start' and 'NOKJ_per_kwh' from an API dict.
+    
+    This function is only to be used in the fetch_day_prices() function.
+    
+    Arguments:
+        data_dict (dict):
+            Dictionary with price-information for
+            an hour of the day.
+    Returns:
+        new_dict (dict):
+            Dictionary containing the information
+            'time_start' and 'NOK_per_kwh'.
+    """
+    new_dict = {}
+    new_dict["time_start"] = data_dict["time_start"]
+    new_dict["NOK_per_kwh"] = data_dict["NOK_per_kwh"]
+    return new_dict
 
 
 def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.DataFrame:
     """Fetch one day of data for one location from hvakosterstrommen.no API
 
-    Make sure to document arguments and return value...
-    ...
+    This function will fetch all the prices for one location of one day
+    and store these in a dataframe with two column for time and price.
+    The dataframe returned should consist of 24 rows of data (24 hours).
+    
+    Arguments:
+        date (datetime.date):
+            The date from which information on prices should be fetched.
+        location (str):
+            The location from which information on prices should be fetched.
+    Returns:
+        df (pd.dataframe):
+            Table containing the prices throughout a date for a location.
     """
     if date is None:
         date = datetime.date.today()
         
     # Asserts date is after 2nd of October 2022.
-    assert_date = datetime.date(2022, 10, 2)
-    assert date > assert_date
+    assert date > datetime.date(2022, 10, 2)
     
     # Fetches the information from the API.
     api = "https://www.hvakosterstrommen.no/strompris-api"
     url = f"{api}/b2/prices/{date.year}/{date.month}-{date.day}_{location}.json"
     r = requests.get(url)
     if not 200 <= r.status_code < 300:
-        # Do error handling.
-        ...
+        raise ValueError(f"Request unsuccessful with status-code: {r.status_code}")
     
-    # Inserts the information gathered into a DataFrame.
+    # Takes the information we want from the API and puts it into a dataframe.
     data = r.json()
-    data = ...
-    df = pd.DataFrame.from_dict(data)
-    df["date"] = pd.to_datetime(df["date"])
+    prepared_data = [prepare_dict_information(data_dict) for data_dict in data]
+    df = pd.DataFrame.from_dict(prepared_data)
+    df["time_start"] = pd.to_datetime(df["time_start"], utc=True).dt.tz_convert("Europe/Oslo")
     
     return df
 

@@ -16,7 +16,7 @@ from strompris import (
 )
 
 app = FastAPI()
-templates = ...
+templates = Jinja2Templates(directory="templates")
 
 
 # `GET /` should render the `strompris.html` template
@@ -24,8 +24,20 @@ templates = ...
 # - request
 # - location_codes: location code dict
 # - today: current date
-
-...
+@app.get("/")
+def render_strompris(
+        request: Request,
+        location_codes: dict = LOCATION_CODES,
+        today: datetime.date = datetime.date.today(),
+):
+    return templates.TemplateResponse(
+        "strompris.html",
+        {
+            "request": request,
+            "location_codes": location_codes,
+            "today": today,
+        }
+    )
 
 
 # GET /plot_prices.json should take inputs:
@@ -36,8 +48,16 @@ templates = ...
 # return should be a vega-lite JSON chart (alt.Chart.to_dict())
 # produced by `plot_prices`
 # (task 5.6: return chart stacked with plot_daily_prices)
+@app.get("/plot_prices.json")
+def return_chart(
+        locations=tuple(LOCATION_CODES.keys()),
+        end: datetime.date = datetime.date.today(),
+        days: int = 8,
+):
+    # Fetches the dataframe for the prices and returns its plot.
+    df = fetch_prices(end_date=end, days=days, locations=locations)
+    return plot_prices(df)
 
-...
 
 # Task 5.6:
 # `GET /activity` should render the `activity.html` template
@@ -67,5 +87,5 @@ templates = ...
 
 if __name__ == "__main__":
     # use uvicorn to launch your application on port 5000
-
-    ...
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=5000)

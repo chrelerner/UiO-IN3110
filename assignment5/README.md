@@ -25,3 +25,5 @@ Tasks 5.1 - 5.3 are implemented and worked fine for me.
 
 For task 5.5, I have not made much progress. I have only made the docs directory
 and used the "sphinx-quiststart" and "make html" commands.
+
+I have made an active effort to follow the pep8 formatting style.

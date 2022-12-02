@@ -153,7 +153,6 @@ def plot_prices(df: pd.DataFrame) -> alt.Chart:
         y="NOK_per_kWh",
         color="location"
     )
-    chart.show()
     return chart
 
 

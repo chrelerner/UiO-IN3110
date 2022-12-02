@@ -56,7 +56,7 @@ def return_chart(
 ):
     # Fetches the dataframe for the prices and returns its plot.
     df = fetch_prices(end_date=end, days=days, locations=locations)
-    return plot_prices(df)
+    return plot_prices(df).to_dict()
 
 
 # Task 5.6:

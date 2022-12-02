@@ -22,3 +22,6 @@ http://127.0.0.1:5000 in your web browser.
 ## Notes for the grader
 
 Tasks 5.1 - 5.3 are implemented and worked fine for me.
+
+For task 5.5, I have not made much progress. I have only made the docs directory
+and used the "sphinx-quiststart" and "make dir" commands.

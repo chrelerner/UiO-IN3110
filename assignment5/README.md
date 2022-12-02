@@ -3,16 +3,17 @@
 All the code was run with python 3.9.12 on Windows 10.
 
 Required packages and dependencies are:
-    - altair
-    - altair-viewer
-    - beautifulsoup4
-    - fastapi[all]
-    - pandas
-    - pytest
-    - requests
-    - requests-cache
-    - uvicorn
-
+```
+altair
+altair-viewer
+beautifulsoup4
+fastapi[all]
+pandas
+pytest
+requests
+requests-cache
+uvicorn
+```
 To install the packages simply run the command "pip install -r requirements.txt".
 
 To run the Strompris webpage, run app.py in the terminal, and access 

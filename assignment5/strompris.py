@@ -111,8 +111,15 @@ def fetch_prices(
 ) -> pd.DataFrame:
     """Fetch prices for multiple days and locations into a single DataFrame
 
-    Make sure to document arguments and return value...
-    ...
+    Arguments:
+        end_date (datetime.date):
+            The last date to gather information from.
+        days (int):
+            The number of days to gather information from counted
+            backwards from end_date.
+    Returns:
+        resut_df (pd.DataFrame):
+            Pandas dataframe with all the information requested.
     """
     if end_date is None:
         end_date = datetime.date.today()
@@ -142,11 +149,16 @@ def fetch_prices(
 def plot_prices(df: pd.DataFrame) -> alt.Chart:
     """Plot energy prices over time
 
-    x-axis should be time_start
-    y-axis should be price in NOK
-    each location should get its own line
+    x-axis is time_start
+    y-axis is price in NOK
+    each location gets its own line on the plot
 
-    Make sure to document arguments and return value...
+    Arguments:
+        df (pd.DataFrafe):
+            Pandas dataframe with the information to plot.
+    Returns:
+        chart (alt.Chart):
+            Plot in the form of an altair chart.
     """
     chart = alt.Chart(df).mark_line().encode(
         x="time_start",

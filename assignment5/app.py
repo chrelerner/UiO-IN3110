@@ -50,7 +50,7 @@ def render_strompris(
 # (task 5.6: return chart stacked with plot_daily_prices)
 @app.get("/plot_prices.json")
 def return_chart(
-        locations=tuple(LOCATION_CODES.keys()),
+        locations: Optional[List[str]] = Query(default=tuple(LOCATION_CODES.keys())),
         end: datetime.date = datetime.date.today(),
         days: int = 8,
 ):

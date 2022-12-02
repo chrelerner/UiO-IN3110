@@ -51,16 +51,44 @@
   <body>
     <!-- Add Navigation Bar to Docs.
     -->
-    <h2>Strømpris visualisert</h2>
-    <p>Strømprisene er hentet fra hvakosterstrommen.no sin API.</p>
+    <h2>Strompris visualizer</h2>
+    <p>The plotted electricity prices are fetched from the API of hvakosterstrommen.no.</p>
 
     <div id="vis"></div>
     <!-- Create Form -->
-    <p>Velg hvilke lokasjoner og dager du ønsker å plotte strømpriser for:</p>
+    <p>If none of the boxes are checked, prices for all locations will be displayed.</p>
     
     <form action="javascript:refreshPlot()" id="price-form">
       <!--
       -->
+      
+      <!-- Buttons for choosing locations -->
+      <label><input type="checkbox" id="oslo" name="locations"
+             value="NO1" checked> Oslo </label>
+      <br>       
+      <label><input type="checkbox" id="kristiansand" name="locations"
+             value="NO2" checked> Kristiansand </label>
+      <br>
+      <label><input type="checkbox" id="trondheim" name="locations"
+             value="NO3"> Trondheim </label>
+      <br>
+      <label><input type="checkbox" id="tromso" name="locations"
+             value="NO4"> Tromsø </label>
+      <br>
+      <label><input type="checkbox" id="bergen" name="locations"
+             value="NO5"> Bergen </label>
+      <br>
+      <!-- Input for choosing dates -->
+      <label for="end">End date:</label>
+      <input type="date" id="end" name="end"
+             value="2022-11-11" min="2022-10-03">
+             
+      <label for="text">Days</label>
+      <input type="text" id="days" name="days" value="7">
+      
+      <!-- Update all the information -->
+      <button type="submit">Refresh</button>
+      
     </form>
 
     <script type="text/javascript">
